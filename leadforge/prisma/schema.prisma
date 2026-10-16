@@ -1,0 +1,12 @@
+// Production Postgres schema mirror (local dev uses file DB in data/leadforge.db.json).
+// Run: npx prisma migrate dev (requires DATABASE_URL)
+generator client { provider = "prisma-client-js" }
+datasource db { provider = "postgresql"; url = env("DATABASE_URL") }
+
+model User { id String @id @default(cuid()); email String @unique; salt String; hash String; role String @default("member"); createdAt DateTime @default(now()); credentials Credential[]; jobs Job[]; files ExportFile[]; audits AuditEvent[] }
+model Credential { id String @id @default(cuid()); userId String; provider String; encrypted String?; enabled Boolean @default(true); meta Json?; createdAt DateTime @default(now()); updatedAt DateTime @updatedAt; user User @relation(fields: [userId], references: [id], onDelete: Cascade); @@unique([userId, provider]); @@index([provider]) }
+model Job { id String @id @default(cuid()); userId String; type String; title String; params Json; provider String?; status String @default("pending"); progress Json?; error String?; providerErrors Json?; fileId String?; createdAt DateTime @default(now()); startedAt DateTime?; finishedAt DateTime?; user User @relation(fields: [userId], references: [id], onDelete: Cascade); records Record[]; logs JobLog[]; @@index([userId]); @@index([status]) }
+model Record { id String @id @default(cuid()); jobId String; data Json; url String?; createdAt DateTime @default(now()); job Job @relation(fields: [jobId], references: [id], onDelete: Cascade); @@index([jobId]); @@index([url]) }
+model ExportFile { id String @id @default(cuid()); userId String; jobId String; filename String; filepath String; size Int; sheets Json?; createdAt DateTime @default(now()); user User @relation(fields: [userId], references: [id], onDelete: Cascade); @@index([jobId]) }
+model JobLog { id String @id @default(cuid()); jobId String; level String; message String; at DateTime @default(now()); job Job @relation(fields: [jobId], references: [id], onDelete: Cascade); @@index([jobId]) }
+model AuditEvent { id String @id @default(cuid()); userId String; action String; detail String?; at DateTime @default(now()); user User @relation(fields: [userId], references: [id], onDelete: Cascade); @@index([userId]) }

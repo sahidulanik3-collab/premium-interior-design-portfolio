@@ -1,0 +1,24 @@
+services:
+  app:
+    build: .
+    ports: ["3000:3000"]
+    env_file: .env
+    environment:
+      DATA_DIR: /app/data
+      EXPORT_DIR: /app/data/exports
+    volumes: ["leadforge-data:/app/data"]
+    depends_on: [db, redis]
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: leadforge
+      POSTGRES_PASSWORD: leadforge
+      POSTGRES_DB: leadforge
+    volumes: ["pg-data:/var/lib/postgresql/data"]
+    ports: ["5432:5432"]
+  redis:
+    image: redis:7-alpine
+    ports: ["6379:6379"]
+volumes:
+  leadforge-data: {}
+  pg-data: {}

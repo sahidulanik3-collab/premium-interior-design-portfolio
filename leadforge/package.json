@@ -1,0 +1,20 @@
+{
+  "name": "leadforge",
+  "version": "1.0.0",
+  "description": "LeadForge — standalone lead generation & web scraping SaaS (no external automation platforms)",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js",
+    "test": "node --test tests/",
+    "test:vitest": "vitest run"
+  },
+  "engines": { "node": ">=20" },
+  "dependencies": {},
+  "optionalDependencies": {
+    "cheerio": "^1.0.0",
+    "playwright": "^1.49.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {}
+}

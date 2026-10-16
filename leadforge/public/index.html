@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>LeadForge — Lead Generation & Web Scraping</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+body{font-family:Inter,system-ui,sans-serif;background:#F8FAFC;color:#0F172A}
+.side-link{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;font-size:13.5px;font-weight:600;color:#475569;cursor:pointer;border:1px solid transparent}
+.side-link:hover{background:#F1F5F9}.side-link.active{background:#0F172A;color:#fff}
+.card{background:#fff;border:1px solid #E2E8F0;border-radius:16px}
+.inp{background:#fff;border:1.5px solid #E2E8F0;border-radius:10px;padding:10px 14px;font-size:13.5px;width:100%;outline:none}
+.inp:focus{border-color:#0F172A;box-shadow:0 0 0 3px rgba(15,23,42,.08)}
+.lbl{font-size:11px;font-weight:800;letter-spacing:.6px;color:#475569;margin-bottom:5px;display:block;text-transform:uppercase}
+.btn-p{background:#0F172A;color:#fff;font-weight:700;border-radius:10px;padding:10px 18px;font-size:13px;display:inline-flex;align-items:center;gap:8px}
+.btn-p:hover{background:#1E293B}.btn-o{border:1.5px solid #E2E8F0;font-weight:700;border-radius:10px;padding:9px 16px;font-size:13px;background:#fff}
+.btn-o:hover{border-color:#0F172A}.page{display:none}.page.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}}
+.badge{font-size:11px;font-weight:800;padding:4px 10px;border-radius:99px}
+table.data{width:100%;font-size:13px}table.data th{background:#F8FAFC;text-align:left;padding:10px 12px;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#64748B;white-space:nowrap}
+table.data td{padding:10px 12px;border-top:1px solid #F1F5F9;vertical-align:top;max-width:280px;overflow:hidden;text-overflow:ellipsis}
+.empty{border:2px dashed #E2E8F0;border-radius:16px;padding:40px;text-align:center;color:#94A3B8}
+.progress{height:8px;background:#F1F5F9;border-radius:99px;overflow:hidden}.progress>div{height:100%;background:#0F172A;transition:width .5s}
+.toast{position:fixed;bottom:20px;right:20px;z-index:99;display:flex;flex-direction:column;gap:8px}
+.toast div{background:#0F172A;color:#fff;padding:12px 18px;border-radius:12px;font-size:13px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+</style>
+</head>
+<body>
+<div id="loginView" class="min-h-screen hidden items-center justify-center p-5">
+  <div class="card max-w-sm w-full p-8">
+    <div class="w-12 h-12 rounded-xl bg-slate-900 text-white flex items-center justify-center text-xl"><i class="fa-solid fa-bolt"></i></div>
+    <h1 class="font-extrabold text-xl mt-4">LeadForge</h1>
+    <p class="text-sm text-slate-500 mt-1">Lead generation & web scraping — private app. Sign in to continue.</p>
+    <label class="lbl mt-5">Email</label><input id="loginEmail" class="inp" type="email" placeholder="you@company.com"/>
+    <label class="lbl mt-3">Password</label><input id="loginPass" class="inp" type="password" placeholder="••••••••"/>
+    <button onclick="doLogin()" class="btn-p w-full justify-center mt-4">Sign in</button>
+    <button onclick="doRegister()" class="btn-o w-full justify-center mt-2">Create first admin account</button>
+    <p id="loginErr" class="text-red-600 text-sm mt-3 hidden"></p>
+    <p class="text-xs text-slate-400 mt-4">First run? Use “Create first admin account”. Afterwards registration closes automatically.</p>
+  </div>
+</div>
+
+<div id="appView" class="hidden">
+<div class="flex min-h-screen">
+  <aside class="w-60 shrink-0 border-r border-slate-200 bg-white p-4 hidden md:flex flex-col gap-1">
+    <div class="flex items-center gap-2 px-2 py-3"><div class="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center"><i class="fa-solid fa-bolt"></i></div><div><div class="font-extrabold">LeadForge</div><div class="text-[11px] text-slate-400 font-bold tracking-widest">LEAD & SCRAPE</div></div></div>
+    <a class="side-link" data-nav="dashboard"><i class="fa-solid fa-gauge w-4"></i>Dashboard</a>
+    <a class="side-link" data-nav="new"><i class="fa-solid fa-plus w-4"></i>New Collection</a>
+    <a class="side-link" data-nav="maps"><i class="fa-solid fa-map-location-dot w-4"></i>Maps Leads</a>
+    <a class="side-link" data-nav="scraping"><i class="fa-solid fa-globe w-4"></i>Website Scraping</a>
+    <a class="side-link" data-nav="history"><i class="fa-solid fa-clock-rotate-left w-4"></i>Job History</a>
+    <a class="side-link" data-nav="downloads"><i class="fa-solid fa-download w-4"></i>Downloads</a>
+    <a class="side-link" data-nav="integrations"><i class="fa-solid fa-plug w-4"></i>API & Integrations</a>
+    <a class="side-link" data-nav="profile"><i class="fa-solid fa-user w-4"></i>Profile</a>
+    <a class="side-link" data-nav="help"><i class="fa-solid fa-circle-question w-4"></i>Help & Setup</a>
+    <div class="mt-auto pt-4 border-t"><div id="userEmail" class="text-xs font-bold text-slate-500 px-2 truncate"></div><button onclick="doLogout()" class="side-link w-full mt-1"><i class="fa-solid fa-right-from-bracket w-4"></i>Logout</button></div>
+  </aside>
+  <div class="flex-1 min-w-0">
+    <header class="md:hidden sticky top-0 bg-white border-b p-3 flex gap-2 overflow-x-auto" id="mobileNav"></header>
+    <main class="p-4 md:p-8 max-w-6xl mx-auto">
+      <section id="page-dashboard" class="page"><div class="flex items-center justify-between flex-wrap gap-3"><h2 class="text-2xl font-extrabold">Dashboard</h2><div class="flex gap-2"><button class="btn-p" onclick="go('maps')"><i class="fa-solid fa-map-location-dot"></i>Maps collection</button><button class="btn-o" onclick="go('scraping')"><i class="fa-solid fa-globe"></i>Website scraping</button></div></div>
+        <div id="statCards" class="grid grid-cols-2 lg:grid-cols-5 gap-3 mt-5"></div>
+        <div class="grid lg:grid-cols-2 gap-4 mt-4"><div class="card p-5"><h3 class="font-extrabold">Recent collection jobs</h3><div id="recentJobs" class="mt-3"></div></div>
+        <div class="card p-5"><h3 class="font-extrabold">Recent Excel files</h3><div id="recentFiles" class="mt-3"></div><h3 class="font-extrabold mt-5">API status</h3><div id="apiStatus" class="mt-2 text-sm"></div></div></div>
+      </section>
+      <section id="page-new" class="page"><h2 class="text-2xl font-extrabold">New Collection</h2><p class="text-slate-500 text-sm mt-1">Choose a source, configure, then start. Jobs run in the background with live progress.</p>
+        <div class="grid md:grid-cols-2 gap-4 mt-4">
+          <div class="card p-6 cursor-pointer hover:border-slate-900" onclick="go('maps')"><i class="fa-solid fa-map-location-dot text-2xl"></i><h3 class="font-extrabold mt-2">Google Maps Leads</h3><p class="text-sm text-slate-500">Niche + location → verified business names, phones, websites, ratings via official Places API.</p></div>
+          <div class="card p-6 cursor-pointer hover:border-slate-900" onclick="go('scraping')"><i class="fa-solid fa-globe text-2xl"></i><h3 class="font-extrabold mt-2">Website Scraping</h3><p class="text-sm text-slate-500">Single page, full crawl, or selected URLs. Titles, emails, phones, links, tables & more.</p></div>
+        </div></section>
+      <section id="page-maps" class="page"><h2 class="text-2xl font-extrabold">Google Maps Lead Collection</h2><p class="text-sm text-slate-500">e.g. Dental clinics in Dhaka · Real estate in London · Restaurants in New York</p>
+        <div class="card p-5 mt-4 grid md:grid-cols-2 gap-4">
+          <div><label class="lbl">Business niche / keyword *</label><input id="m_keyword" class="inp" placeholder="Dental clinics"/></div>
+          <div><label class="lbl">Target location *</label><input id="m_location" class="inp" placeholder="Dhaka, Bangladesh"/></div>
+          <div><label class="lbl">Business type</label><input id="m_businessType" class="inp" placeholder="dentist"/></div>
+          <div><label class="lbl">Desired leads (max 500)</label><input id="m_leadCount" class="inp" type="number" value="25" min="1" max="500"/></div>
+          <div><label class="lbl">Search radius (meters, optional)</label><input id="m_radius" class="inp" type="number" placeholder="5000"/></div>
+          <div><label class="lbl">Language</label><input id="m_lang" class="inp" value="en"/></div>
+          <div><label class="lbl">Minimum rating</label><input id="m_minRating" class="inp" type="number" step="0.1" min="0" max="5" placeholder="e.g. 4.0"/></div>
+          <div><label class="lbl">Category filter (optional)</label><input id="m_category" class="inp" placeholder="restaurant"/></div>
+          <div class="md:col-span-2 flex flex-wrap gap-4 text-sm font-semibold">
+            <label><input type="checkbox" id="m_onlyWebsite"/> Only with website</label>
+            <label><input type="checkbox" id="m_onlyPhone"/> Only with phone</label>
+            <label><input type="checkbox" id="m_dedupe" checked/> Remove duplicates</label>
+            <label><input type="checkbox" id="m_includeStatus"/> Include opening status</label>
+          </div>
+          <div><label class="lbl">Max budget / usage note (USD, optional)</label><input id="m_budget" class="inp" type="number" placeholder="10"/></div>
+          <div><label class="lbl">Provider</label><select id="m_provider" class="inp"><option value="google-places">Google Places API (official default)</option></select></div>
+        </div>
+        <div id="mapsProvNote" class="text-sm mt-2"></div>
+        <button class="btn-p mt-4" onclick="startMaps()"><i class="fa-solid fa-play"></i>Start Collection</button></section>
+      <section id="page-scraping" class="page"><h2 class="text-2xl font-extrabold">Website Scraping</h2>
+        <div class="card p-5 mt-4 grid md:grid-cols-2 gap-4">
+          <div><label class="lbl">Starting URL *</label><input id="s_url" class="inp" placeholder="https://example.com"/></div>
+          <div><label class="lbl">Mode</label><select id="s_mode" class="inp" onchange="document.getElementById('selUrlsWrap').style.display=this.value==='selected'?'block':'none'"><option value="single">Single page</option><option value="crawl">Website crawl</option><option value="selected">Selected pages</option></select></div>
+          <div id="selUrlsWrap" style="display:none" class="md:col-span-2"><label class="lbl">URL list (one per line)</label><textarea id="s_urls" class="inp" rows="3" placeholder="https://example.com/a&#10;https://example.com/b"></textarea></div>
+          <div><label class="lbl">Max pages</label><input id="s_maxPages" class="inp" type="number" value="10" min="1" max="200"/></div>
+          <div><label class="lbl">Max depth</label><input id="s_maxDepth" class="inp" type="number" value="2" min="0" max="5"/></div>
+          <div><label class="lbl">Allow paths (comma-sep, optional)</label><input id="s_allow" class="inp" placeholder="/blog,/docs"/></div>
+          <div><label class="lbl">Exclude regex (comma-sep, optional)</label><input id="s_deny" class="inp" placeholder="logout,\\?print"/></div>
+          <div><label class="lbl">Provider</label><select id="s_provider" class="inp"><option value="cheerio">Built-in (Cheerio/static)</option><option value="firecrawl">Firecrawl (if configured)</option></select></div>
+          <div><label class="lbl">Concurrency</label><input id="s_conc" class="inp" type="number" value="3" min="1" max="5"/></div>
+          <div class="md:col-span-2"><label class="lbl">Fields</label><div id="s_fields" class="flex flex-wrap gap-2 text-sm"></div></div>
+          <div class="md:col-span-2"><label class="lbl">Custom fields (name: instruction per line)</label><textarea id="s_custom" class="inp" rows="2" placeholder="Product Name: main h1&#10;Price: element with .price"></textarea></div>
+        </div>
+        <button class="btn-p mt-4" onclick="startScrape()"><i class="fa-solid fa-play"></i>Start Scraping</button></section>
+      <section id="page-job" class="page"><button class="btn-o" onclick="go('history')">← Back</button><h2 class="text-2xl font-extrabold mt-2" id="jobTitle">Job</h2><div id="jobMeta" class="mt-3"></div><div class="card p-5 mt-3"><h3 class="font-extrabold">Live progress</h3><div class="progress mt-2"><div id="jobBar" style="width:0%"></div></div><div id="jobStats" class="text-sm mt-2"></div><div class="flex gap-2 mt-3"><button class="btn-o" onclick="cancelJob()">Cancel</button><button class="btn-o" onclick="retryJob()">Retry</button><button class="btn-p" id="jobDownloadBtn" onclick="downloadJobFile()">Download Excel</button></div></div>
+        <div class="card p-5 mt-3"><h3 class="font-extrabold">Logs</h3><pre id="jobLogs" class="text-xs bg-slate-50 p-3 rounded-lg mt-2 whitespace-pre-wrap max-h-60 overflow-auto"></pre></div>
+        <div class="mt-3 flex gap-2"><input id="recSearch" class="inp" placeholder="Search records…" oninput="loadRecords(1)"/><button class="btn-o" onclick="loadRecords(1)">Search</button></div>
+        <div class="card mt-3 overflow-auto"><table class="data"><thead><tr id="recHead"></tr></thead><tbody id="recBody"></tbody></table></div>
+        <div class="flex items-center gap-3 mt-2 text-sm"><button class="btn-o" onclick="loadRecords(curPage-1)">Prev</button><span id="recPage"></span><button class="btn-o" onclick="loadRecords(curPage+1)">Next</button><button class="btn-o" onclick="exportSelected()">Export selected</button></div></section>
+      <section id="page-history" class="page"><h2 class="text-2xl font-extrabold">Job History</h2><div id="historyList" class="mt-4 grid gap-3"></div></section>
+      <section id="page-downloads" class="page"><h2 class="text-2xl font-extrabold">Export Downloads</h2><div id="filesList" class="mt-4 grid gap-3"></div></section>
+      <section id="page-integrations" class="page"><h2 class="text-2xl font-extrabold">API & Integrations</h2><p class="text-sm text-slate-500">Keys are encrypted (AES-256-GCM) and never shown in full. Empty key field keeps the stored key.</p><div id="credList" class="mt-4 grid gap-3"></div></section>
+      <section id="page-profile" class="page"><h2 class="text-2xl font-extrabold">Profile</h2><div class="card p-5 mt-4"><div id="profileInfo" class="text-sm"></div><h3 class="font-extrabold mt-4">Recent audit events</h3><div id="auditList" class="text-sm mt-2"></div></div></section>
+      <section id="page-help" class="page"><h2 class="text-2xl font-extrabold">Help & Setup Guide</h2><div class="card p-5 mt-4 text-sm leading-7" id="helpBody"></div></section>
+    </main>
+  </div>
+</div>
+</div>
+<div class="toast" id="toasts"></div>
+<script src="/app.js"></script>
+</body></html>

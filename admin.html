@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>SAHIDUL ANIK CMS — Admin Panel</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>tailwind.config={theme:{extend:{colors:{mint:'#ECFDF5',line:'#D1FAE5',deep:'#047857'},fontFamily:{sans:['Inter','sans-serif']}}}}</script>
+<style>
+  *{-webkit-tap-highlight-color:transparent} body{font-family:'Inter',sans-serif;background:#F7FAF8;color:#0f1f19}
+  ::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:#A7F3D0;border-radius:99px}::-webkit-scrollbar-track{background:transparent}
+  .side-link{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;font-size:13.5px;font-weight:500;color:#3f4a46;cursor:pointer;transition:.2s;border:1px solid transparent}
+  .side-link:hover{background:#ECFDF5}
+  .side-link.active{background:#047857;color:#fff;font-weight:700;box-shadow:0 8px 20px rgba(4,120,87,.3)}
+  .card{background:#fff;border:1.5px solid #D1FAE5;border-radius:20px}
+  .card-green{background:#F0FDF6;border:1.5px solid #A7F3D0;border-radius:20px}
+  .inp{background:#fff;border:1.5px solid #D1FAE5;border-radius:14px;padding:11px 16px;font-size:13.5px;width:100%;outline:none;transition:.2s;font-weight:500}
+  .inp:focus{border-color:#059669;box-shadow:0 0 0 4px rgba(16,185,129,.15)}
+  .lbl{font-size:10.5px;font-weight:800;letter-spacing:1px;color:#37414d;margin-bottom:6px;display:block}
+  .sec-t{font-size:12px;font-weight:800;letter-spacing:.5px;color:#047857}
+  .btn-g{background:#047857;color:#fff;font-weight:700;border-radius:12px;padding:11px 20px;font-size:13px;transition:.2s;display:inline-flex;align-items:center;gap:8px}
+  .btn-g:hover{background:#065F46;transform:translateY(-1px);box-shadow:0 10px 25px rgba(4,120,87,.3)}
+  .btn-o{border:1.5px solid #D1FAE5;font-weight:700;border-radius:12px;padding:10px 18px;font-size:13px;transition:.2s;background:#fff}
+  .btn-o:hover{border-color:#059669;color:#047857}
+  .btn-danger{background:#FEF2F2;color:#DC2626;border:1.5px solid #FECACA;font-weight:700;border-radius:10px;padding:8px 14px;font-size:12px}
+  .btn-danger:hover{background:#DC2626;color:#fff}
+  .page{display:none}.page.active{display:block;animation:fade .3s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}}
+  .toast{animation:tin .3s cubic-bezier(.3,1.4,.5,1)}@keyframes tin{from{opacity:0;transform:translateY(14px) scale(.95)}}
+  .thumb-pick{border:2.5px solid transparent;cursor:pointer;border-radius:14px;transition:.2s}
+  .thumb-pick:hover{transform:scale(1.04)}.thumb-pick.sel{border-color:#059669}
+  #loginWrap{background:linear-gradient(135deg,#ECFDF5,#F7FAF8)}
+  .stat-pill{background:#ECFDF5;border:1.5px solid #A7F3D0;color:#047857;font-weight:800;font-size:12px;padding:5px 14px;border-radius:99px}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginWrap" class="fixed inset-0 z-[100] flex items-center justify-center p-5">
+  <div class="card max-w-sm w-full p-8 text-center shadow-2xl">
+    <div class="w-14 h-14 rounded-2xl bg-emerald-700 text-white flex items-center justify-center text-2xl mx-auto"><i class="fa-solid fa-couch"></i></div>
+    <h1 class="font-extrabold text-xl mt-4">SAHIDUL ANIK CMS</h1>
+    <p class="text-xs font-bold tracking-[2px] text-emerald-700">ADMIN PANEL</p>
+    <p class="text-sm text-gray-500 mt-3">Interior portfolio full control. Only owner can unlock.</p>
+    <input id="loginPass" type="password" placeholder="Enter password" autocomplete="current-password" class="inp mt-5 text-center" />
+    <button onclick="doLogin()" class="btn-g w-full justify-center mt-3">Unlock Dashboard →</button>
+    <a href="index.html" class="block mt-3 text-sm text-emerald-700 font-semibold">← Back to website</a>
+  </div>
+</div>
+
+<div class="flex min-h-screen">
+  <!-- SIDEBAR -->
+  <aside class="w-[240px] flex-shrink-0 bg-white border-r border-line border-emerald-100 p-4 hidden md:flex flex-col gap-1 sticky top-0 h-screen overflow-y-auto">
+    <div class="flex items-center gap-2 px-2 py-2">
+      <div class="w-9 h-9 rounded-xl bg-emerald-700 text-white flex items-center justify-center"><i class="fa-solid fa-couch text-sm"></i></div>
+      <div><div class="font-extrabold text-[13px] leading-none">SAHIDUL ANIK CMS</div><div class="text-[9px] font-bold tracking-[2px] text-emerald-700 mt-1">ADMIN PANEL</div></div>
+    </div>
+    <div class="mt-3 space-y-1" id="sideMenu">
+      <div class="side-link" data-p="dashboard"><i class="fa-solid fa-grid-2 w-4"></i> Dashboard</div>
+      <div class="side-link" data-p="projects"><i class="fa-regular fa-images w-4"></i> Projects & Case Studies</div>
+      <div class="side-link" data-p="services"><i class="fa-solid fa-bolt w-4"></i> Services & Pricing</div>
+      <div class="side-link" data-p="skills"><i class="fa-solid fa-wrench w-4"></i> Skills & Toolbelt</div>
+      <div class="side-link" data-p="blog"><i class="fa-regular fa-newspaper w-4"></i> Blog CMS</div>
+      <div class="side-link" data-p="reviews"><i class="fa-regular fa-star w-4"></i> Testimonials</div>
+      <div class="side-link" data-p="process"><i class="fa-solid fa-briefcase w-4"></i> Experiences / Process</div>
+      <div class="side-link" data-p="inbox"><i class="fa-regular fa-envelope w-4"></i> Contact Inbox <span id="inboxBadge" class="ml-auto stat-pill">0</span></div>
+      <div class="side-link" data-p="walkthrough"><i class="fa-solid fa-video w-4"></i> Walkthrough Videos</div>
+      <div class="side-link" data-p="media"><i class="fa-regular fa-folder-open w-4"></i> Media Library</div>
+      <div class="side-link" data-p="profile"><i class="fa-regular fa-user w-4"></i> Profile Info</div>
+      <div class="side-link" data-p="settings"><i class="fa-solid fa-gear w-4"></i> Site Settings</div>
+    </div>
+    <div class="mt-auto pt-4 border-t border-emerald-100 space-y-1">
+      <a href="index.html" class="side-link"><i class="fa-solid fa-arrow-up-right-from-square w-4 text-emerald-700"></i> View Public Site</a>
+      <div class="side-link !text-red-600" onclick="signOut()"><i class="fa-solid fa-right-from-bracket w-4"></i> Sign Out</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="flex-1 min-w-0">
+    <!-- mobile top -->
+    <div class="md:hidden bg-white border-b border-emerald-100 p-3 flex gap-2 overflow-x-auto sticky top-0 z-40" id="mMenu"></div>
+    <!-- header -->
+    <header class="bg-white/80 backdrop-blur border-b border-emerald-100 px-5 md:px-8 py-4 flex items-center justify-between sticky top-0 md:top-0 z-30">
+      <div class="font-bold text-[15px]" id="pageTitle">Dashboard</div>
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="text-xs font-bold text-emerald-700 border border-emerald-200 rounded-full px-4 py-2 hidden sm:block">View site ↗</a>
+        <div class="w-9 h-9 rounded-full bg-emerald-700 text-white flex items-center justify-center text-xs font-extrabold" id="avatarTx">SA</div>
+        <div class="text-xs font-bold hidden sm:block" id="headName">SAHIDUL ANIK</div>
+      </div>
+    </header>
+
+    <main class="p-4 md:p-8 max-w-5xl">
+      <!-- DASHBOARD -->
+      <section class="page" id="pg-dashboard">
+        <h1 class="text-2xl font-extrabold">Good evening, Anik 👋</h1>
+        <p class="text-sm text-gray-500">Control every section from here. Changes go live on the public site instantly.</p>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-5" id="dashStats"></div>
+        <div class="grid md:grid-cols-2 gap-4 mt-4">
+          <div class="card p-5"><div class="sec-t">⚡ QUICK ACTIONS</div><div class="grid grid-cols-2 gap-2 mt-3">
+            <button class="btn-g justify-center" onclick="go('projects');startAddProject()">＋ New Project</button>
+            <button class="btn-o" onclick="go('reviews');">＋ Add Review</button>
+            <button class="btn-o" onclick="go('blog')">＋ New Blog</button>
+            <button class="btn-o" onclick="go('inbox')">📩 Check Inbox</button>
+          </div></div>
+          <div class="card p-5"><div class="sec-t">📩 LATEST BOOKINGS</div><div id="dashLeads" class="mt-3 space-y-2 text-sm"></div></div>
+        </div>
+        <div class="card-green p-5 mt-4 text-sm"><b class="text-emerald-800">💡 How it works:</b> Open any section from the sidebar → edit / add / delete → press <b>Save</b> and the <span class="stat-pill">index.html</span> site updates automatically. All data stays saved in this browser's localStorage.</div>
+      </section>
+
+      <!-- PROJECTS -->
+      <section class="page" id="pg-projects">
+        <h1 class="text-2xl font-extrabold">Projects & Case Studies</h1>
+        <p class="text-sm text-gray-500">Multi-photo gallery, budget, materials, featured spotlight — all here.</p>
+        <div class="flex gap-2 mt-4 flex-wrap">
+          <input id="pjSearch" placeholder="Search projects..." class="inp !w-56" oninput="renderPjList()" />
+          <select id="pjFilter" class="inp !w-44" onchange="renderPjList()"><option value="">All categories</option><option>Living</option><option>Bedroom</option><option>Kitchen</option><option>Office</option><option>Commercial</option></select>
+          <button class="btn-g" onclick="startAddProject()">＋ Add Project</button>
+        </div>
+        <div id="pjList" class="grid md:grid-cols-2 gap-3 mt-4"></div>
+        <!-- editor -->
+        <div id="pjEditor" class="card-green p-5 mt-4 hidden">
+          <div class="flex items-center justify-between"><b id="pjEdTitle">＋ New Project</b><button class="btn-o !py-1.5" onclick="closePjEditor()">Close ✕</button></div>
+          <div class="grid sm:grid-cols-2 gap-3 mt-4">
+            <div><span class="lbl">TITLE *</span><input id="p_title" class="inp" /></div>
+            <div><span class="lbl">CATEGORY</span><select id="p_cat" class="inp"><option>Living</option><option>Bedroom</option><option>Kitchen</option><option>Office</option><option>Commercial</option></select></div>
+            <div class="sm:col-span-2 card p-4">
+              <span class="sec-t">🖼️ PHOTO GALLERY (multiple — add / delete / reorder)</span>
+              <div class="flex gap-2 mt-2 flex-wrap">
+                <label class="btn-g cursor-pointer"><i class="fa-solid fa-upload"></i> Upload from device<input id="p_upload" type="file" accept="image/*" multiple class="hidden" /></label>
+                <input id="p_urladd" placeholder="Paste image URL + Add" class="inp !w-64" />
+                <button class="btn-o" onclick="addPjUrl()">Add URL</button>
+              </div>
+              <div id="p_gallery" class="flex gap-2 mt-3 flex-wrap"></div>
+              <p class="text-[11px] text-gray-500 mt-2">Uploads from your device are auto-compressed and saved in the browser. First photo = cover.</p>
+            </div>
+            <div><span class="lbl">LOCATION</span><input id="p_loc" class="inp" placeholder="Gulshan, Dhaka" /></div>
+            <div><span class="lbl">CLIENT</span><input id="p_client" class="inp" placeholder="Rahman Family" /></div>
+            <div><span class="lbl">SIZE</span><input id="p_size" class="inp" placeholder="1800 sqft" /></div>
+            <div><span class="lbl">BUDGET</span><input id="p_budget" class="inp" placeholder="৳8.2L" /></div>
+            <div><span class="lbl">DURATION</span><input id="p_dur" class="inp" placeholder="55 days" /></div>
+            <div><span class="lbl">YEAR</span><input id="p_year" type="number" class="inp" placeholder="2025" /></div>
+            <div><span class="lbl">STYLE</span><input id="p_style" class="inp" placeholder="Scandi Warm" /></div>
+            <div><span class="lbl">STATUS</span><select id="p_status" class="inp"><option>Completed</option><option>Ongoing</option></select></div>
+            <div class="sm:col-span-2"><span class="lbl">MATERIALS (comma)</span><input id="p_mats" class="inp" /></div>
+            <div class="sm:col-span-2"><span class="lbl">SCOPE (comma)</span><input id="p_scope" class="inp" /></div>
+            <div class="sm:col-span-2"><span class="lbl">OVERVIEW</span><textarea id="p_desc" rows="2" class="inp"></textarea></div>
+            <div><span class="lbl">CHALLENGE</span><textarea id="p_ch" rows="2" class="inp"></textarea></div>
+            <div><span class="lbl">SOLUTION</span><textarea id="p_so" rows="2" class="inp"></textarea></div>
+            <div class="sm:col-span-2"><span class="lbl">CLIENT REVIEW QUOTE</span><input id="p_quote" class="inp" /></div>
+            <div class="sm:col-span-2"><span class="lbl">WALKTHROUGH VIDEO URL (YouTube / Shorts / Vimeo / Drive / MP4)</span><div class="flex gap-2"><input id="p_video" class="inp flex-1" placeholder="https://www.youtube.com/watch?v=... / youtu.be / Drive share link" oninput="prevVid('p_video','p_vidPrev')" /><button type="button" class="btn-o whitespace-nowrap" onclick="prevVid('p_video','p_vidPrev')">▶ Test</button></div><div id="p_vidPrev" class="mt-2"></div><p class="text-[11px] text-gray-500 mt-1">Save-এর আগেই Test চাপো — নিচে ভিডিও না চললে লিংক ভুল বা Embedding OFF।</p></div>
+            <label class="sm:col-span-2 text-sm font-bold flex items-center gap-2"><input id="p_feat" type="checkbox" class="w-4 h-4 accent-emerald-700" /> ⭐ Featured spotlight (large homepage banner)</label>
+            <div class="sm:col-span-2 flex gap-2"><button class="btn-g flex-1 justify-center" onclick="savePjEditor()">💾 Save Project</button><button class="btn-o" onclick="closePjEditor()">Cancel</button></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SERVICES -->
+      <section class="page" id="pg-services">
+        <h1 class="text-2xl font-extrabold">Services & Pricing</h1>
+        <p class="text-sm text-gray-500">Service card add / edit / delete + 3 pricing packages.</p>
+        <div class="card p-5 mt-4"><div class="sec-t">💼 SERVICE CARDS</div>
+          <div class="grid sm:grid-cols-2 gap-2 mt-3">
+            <input id="s_secT" class="inp" placeholder="Section title" /><input id="s_secS" class="inp" placeholder="Section subtitle" />
+          </div>
+          <div id="svcList" class="space-y-2 mt-3"></div>
+          <div class="grid grid-cols-4 gap-2 mt-3">
+            <input id="s_i" class="inp" placeholder="🏠" /><input id="s_t" class="inp col-span-3" placeholder="New service title" />
+            <input id="s_d" class="inp col-span-3" placeholder="Description" /><input id="s_p" class="inp" placeholder="from ৳.." />
+          </div>
+          <div class="flex gap-2 mt-3"><button class="btn-g" onclick="addService()">＋ Add Service</button><button class="btn-o" onclick="saveServicesSec()">💾 Save section + list</button></div>
+        </div>
+        <div class="card p-5 mt-4"><div class="sec-t">💰 3 PRICING PACKAGES</div><div id="priceForms" class="grid md:grid-cols-3 gap-3 mt-3"></div>
+          <button class="btn-g mt-4" onclick="savePricing()">💾 Save Pricing</button></div>
+      </section>
+
+      <!-- SKILLS -->
+      <section class="page" id="pg-skills">
+        <h1 class="text-2xl font-extrabold">Skills & Toolbelt</h1>
+        <p class="text-sm text-gray-500">Skill bars for the About section — add / delete / change %.</p>
+        <div class="card p-5 mt-4"><div id="skillList" class="space-y-2"></div>
+          <div class="flex gap-2 mt-3"><input id="sk_t" class="inp" placeholder="Skill name" /><input id="sk_v" type="number" min="1" max="100" class="inp !w-28" placeholder="90" /><button class="btn-g" onclick="addSkill()">＋ Add</button></div>
+          <button class="btn-o mt-3" onclick="saveSkills()">💾 Save Skills</button></div>
+      </section>
+
+      <!-- BLOG -->
+      <section class="page" id="pg-blog">
+        <h1 class="text-2xl font-extrabold">Blog CMS (Journal)</h1>
+        <p class="text-sm text-gray-500">Homepage journal cards — add / edit / delete.</p>
+        <div id="blogList" class="space-y-3 mt-4"></div>
+        <div class="card-green p-5 mt-4"><div class="sec-t">＋ ADD / EDIT POST</div>
+          <div class="grid gap-2 mt-3"><input id="b_img" class="inp" placeholder="Cover image URL" /><input id="b_tag" class="inp" placeholder="TAG — BUDGET" /><input id="b_t" class="inp" placeholder="Title" /><input id="b_d" class="inp" placeholder="Short desc" />
+          <div class="flex gap-2"><button class="btn-g" onclick="saveBlog()">💾 Save Post</button><button class="btn-o" onclick="resetBlogForm()">Clear</button></div></div></div>
+      </section>
+
+      <!-- REVIEWS -->
+      <section class="page" id="pg-reviews">
+        <h1 class="text-2xl font-extrabold">Testimonials</h1>
+        <p class="text-sm text-gray-500">Client reviews — add / delete.</p>
+        <div id="revList" class="space-y-3 mt-4"></div>
+        <div class="card-green p-5 mt-4"><div class="sec-t">＋ ADD REVIEW</div>
+          <div class="grid sm:grid-cols-2 gap-2 mt-3"><input id="r_n" class="inp" placeholder="Name" /><input id="r_r" class="inp" placeholder="Role — Gulshan homeowner" />
+          <textarea id="r_t" rows="2" class="inp sm:col-span-2" placeholder="Review text"></textarea></div>
+          <button class="btn-g mt-3" onclick="addReview()">＋ Add Review</button></div>
+      </section>
+
+      <!-- PROCESS -->
+      <section class="page" id="pg-process">
+        <h1 class="text-2xl font-extrabold">Experiences / Process</h1>
+        <p class="text-sm text-gray-500">4-step process + audit box.</p>
+        <div class="card p-5 mt-4"><input id="pr_title" class="inp" placeholder="Section title" />
+          <div id="procList" class="space-y-2 mt-3"></div>
+          <div class="grid grid-cols-4 gap-2 mt-3"><input id="pr_i" class="inp" placeholder="☕" /><input id="pr_t" class="inp col-span-3" placeholder="Step title" /><input id="pr_d" class="inp col-span-4" placeholder="Step desc" /></div>
+          <div class="flex gap-2 mt-3"><button class="btn-g" onclick="addProc()">＋ Add Step</button></div>
+          <div class="grid gap-2 mt-4"><input id="pr_aT" class="inp" placeholder="Audit box title" /><input id="pr_aS" class="inp" placeholder="Audit box subtitle" /></div>
+          <button class="btn-o mt-3" onclick="saveProcess()">💾 Save Process</button></div>
+      </section>
+
+      <!-- INBOX -->
+      <section class="page" id="pg-inbox">
+        <h1 class="text-2xl font-extrabold">Contact Inbox</h1>
+        <p class="text-sm text-gray-500">Leads coming from the website booking form.</p>
+        <div id="inboxList" class="space-y-3 mt-4"></div>
+      </section>
+
+      <!-- WALKTHROUGH VIDEOS -->
+      <section class="page" id="pg-walkthrough">
+        <h1 class="text-2xl font-extrabold">Walkthrough Videos</h1>
+        <p class="text-sm text-gray-500">Manage videos for walkthrough section + about profile badge.</p>
+        <div class="card p-5 mt-4 grid gap-3">
+          <div><span class="sec-t">🔴 HERO CARD VIDEO (red-arrow — clicking the small hero card will play it)</span><div class="flex gap-2 mt-2"><input id="st_heroVideo" class="inp flex-1" placeholder="YouTube / Shorts / Vimeo / Drive / MP4 link" oninput="prevVid('st_heroVideo','vidPrevBox')" /><button class="btn-o whitespace-nowrap" onclick="prevVid('st_heroVideo','vidPrevBox')">▶ Test</button></div></div>
+          <div><span class="sec-t">▶️ WALKTHROUGH SECTION VIDEO (auto-shows in walkthrough section)</span><div class="flex gap-2 mt-2"><input id="st_walkthroughVideo" class="inp flex-1" placeholder="YouTube / Shorts / Vimeo / Drive / MP4 link" oninput="prevVid('st_walkthroughVideo','vidPrevBox')" /><button class="btn-o whitespace-nowrap" onclick="prevVid('st_walkthroughVideo','vidPrevBox')">▶ Test</button></div></div>
+          <div><span class="sec-t">▶️ ABOUT PROFILE VIDEO (shows as badge on about photo)</span><div class="flex gap-2 mt-2"><input id="st_aboutVideo" class="inp flex-1" placeholder="YouTube / Shorts / Vimeo / Drive / MP4 link" oninput="prevVid('st_aboutVideo','vidPrevBox')" /><button class="btn-o whitespace-nowrap" onclick="prevVid('st_aboutVideo','vidPrevBox')">▶ Test</button></div></div>
+          <div id="vidPrevBox"></div>
+          <p class="text-[11px] text-gray-500">Test-এ না চললে: (1) লিংক ভুল / Private / Age-restricted, (2) Embedding OFF (Studio → Details → Embedding ON), (3) PC-তে file দিয়ে খুললে মাঝে মাঝে Error 153 আসে — hosting-এ ঠিক চলবে।</p>
+          <button class="btn-g" onclick="saveWalkthrough()">💾 Save Walkthrough Videos</button>
+        </div>
+        <div class="card-green p-5 mt-4">
+          <div class="sec-t">📋 PROJECT VIDEOS (auto-collected from projects with video)</div>
+          <div id="walkthroughProjectList" class="space-y-2 mt-3 text-sm"></div>
+        </div>
+      </section>
+
+      <!-- MEDIA -->
+      <section class="page" id="pg-media">
+        <h1 class="text-2xl font-extrabold">Media Library</h1>
+        <p class="text-sm text-gray-500">All site photos in one place + your uploads. Copy and paste into any field.</p>
+        <div class="card-green p-5 mt-4"><div class="sec-t">⬆️ UPLOAD NEW</div>
+          <div class="flex gap-2 mt-3 flex-wrap"><label class="btn-g cursor-pointer"><i class="fa-solid fa-upload"></i> Choose from device<input id="m_upload" type="file" accept="image/*" multiple class="hidden" /></label>
+          <input id="m_url" placeholder="...or paste image URL" class="inp !w-72" /><button class="btn-o" onclick="addMediaUrl()">Add URL</button></div></div>
+        <div id="mediaGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mt-4"></div>
+      </section>
+
+      <!-- PROFILE -->
+      <section class="page" id="pg-profile">
+        <h1 class="text-2xl font-extrabold">Profile & Headline CMS</h1>
+        <p class="text-sm text-gray-500">Manage hero text, avatar photo, intro video URL, location, and key statistics.</p>
+        <div class="card p-5 mt-4 grid sm:grid-cols-2 gap-3">
+          <div><span class="lbl">FULL NAME *</span><input id="f_brand" class="inp" /></div>
+          <div><span class="lbl">PROFESSIONAL TITLE *</span><input id="f_role" class="inp" /></div>
+          <div class="sm:col-span-2"><span class="lbl">HERO MAIN HEADLINE</span><textarea id="f_heroTitle" rows="2" class="inp"></textarea></div>
+          <div class="sm:col-span-2"><span class="lbl">HERO DESCRIPTION</span><textarea id="f_heroDesc" rows="2" class="inp"></textarea></div>
+          <div class="sm:col-span-2"><span class="lbl">TRUST PILLS (one per line)</span><textarea id="f_heroTrust" rows="3" class="inp"></textarea></div>
+        </div>
+        <div class="card-green p-5 mt-4">
+          <div class="sec-t">🖼️ HERO AVATAR PROFILE PHOTO MANAGER</div>
+          <div class="flex flex-col sm:flex-row gap-5 mt-4">
+            <div class="text-center"><img id="f_aboutPrev" src="" class="w-32 h-40 object-cover rounded-2xl border-2 border-emerald-300 mx-auto" alt="" /><div class="text-[10px] font-bold text-emerald-700 mt-1">LIVE PREVIEW</div></div>
+            <div class="flex-1 grid gap-2">
+              <span class="lbl">1. UPLOAD PHOTO FROM PHONE GALLERY / PC:</span>
+              <label class="btn-g cursor-pointer w-fit"><i class="fa-solid fa-upload"></i> Choose Photo from Device<input id="f_upload" type="file" accept="image/*" class="hidden" /></label>
+              <span class="lbl">2. OR PASTE IMAGE URL LINK:</span>
+              <input id="f_aboutPhoto" class="inp" oninput="document.getElementById('f_aboutPrev').src=this.value" />
+              <span class="lbl">LOCATION:</span><input id="f_aboutRole" class="inp" />
+            </div>
+          </div>
+        </div>
+        <div class="card-green p-5 mt-4 grid gap-3">
+          <div><span class="sec-t">🎬 HERO GALLERY IMAGES (3 images)</span></div>
+          <div id="f_heroImgs" class="grid gap-2"></div>
+          <div><span class="sec-t">▶️ INTRO VIDEO URL (YOUTUBE / LOOM / MP4 — WILL BE USED IN THE HERO CARD)</span><input id="f_video" class="inp mt-2" placeholder="https://youtu.be/..." /><p class="text-[11px] text-gray-500 mt-1">If a video is added, the hero card title will link to it. If empty, it stays as before.</p></div>
+          <div><span class="sec-t">▶️ WALKTHROUGH VIDEO URL (For walkthrough section)</span><input id="f_walkthroughVideo" class="inp mt-2" placeholder="https://www.youtube.com/embed/VIDEO_ID" /><p class="text-[11px] text-gray-500 mt-1">It will show automatically in the walkthrough section. Use a YouTube embed URL.</p></div>
+          <div><span class="sec-t">▶️ ABOUT PROFILE VIDEO (About photo er upor badge e)</span><input id="f_aboutVideo" class="inp mt-2" placeholder="https://www.youtube.com/embed/VIDEO_ID" /><p class="text-[11px] text-gray-500 mt-1">The link will appear on the 'Watch Walkthrough' badge over the About photo.</p></div>
+        </div>
+        <div class="card p-5 mt-4">
+          <div class="flex items-center justify-between"><span class="sec-t">📊 BUSINESS IMPACT NUMBERS & STATS MANAGER</span><span class="text-[11px] text-emerald-700">Syncs with Homepage Cards</span></div>
+          <div class="grid sm:grid-cols-2 gap-3 mt-3" id="f_stats"></div>
+          <button class="btn-g mt-4 w-full justify-center" onclick="saveProfile()">💾 Save Profile & Headline</button>
+        </div>
+        <div class="card p-5 mt-4 grid sm:grid-cols-2 gap-3">
+          <div class="sm:col-span-2 sec-t">ABOUT SECTION EXTRA</div>
+          <input id="f_aboutHeading" class="inp sm:col-span-2" placeholder="About heading" />
+          <textarea id="f_aboutBio" rows="3" class="inp sm:col-span-2"></textarea>
+          <input id="f_aw1t" class="inp" placeholder="Award1 title" /><input id="f_aw1s" class="inp" placeholder="Award1 sub" />
+          <input id="f_aw2t" class="inp" placeholder="Award2 title" /><input id="f_aw2s" class="inp" placeholder="Award2 sub" />
+          <button class="btn-o sm:col-span-2" onclick="saveProfile()">💾 Save About Extra</button>
+        </div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="page" id="pg-settings">
+        <h1 class="text-2xl font-extrabold">Site Settings</h1>
+        <p class="text-sm text-gray-500">Contact, topbar, marquee, trust, footer + danger zone.</p>
+        <div class="card p-5 mt-4 grid sm:grid-cols-2 gap-3">
+          <input id="st_topbar" class="inp sm:col-span-2" placeholder="Top bar text" />
+          <input id="st_phone" class="inp" placeholder="Phone" /><input id="st_wa" class="inp" placeholder="WhatsApp 880..." />
+          <input id="st_email" class="inp" placeholder="Email" /><input id="st_addr" class="inp" placeholder="Address" />
+          <input id="st_hours" class="inp" placeholder="Hours" /><input id="st_foot" class="inp" placeholder="Footer line" />
+          <textarea id="st_marquee" rows="2" class="inp sm:col-span-2" placeholder="Marquee comma"></textarea>
+          <input id="st_trustL" class="inp sm:col-span-2" placeholder="Trust label" />
+          <input id="st_trust" class="inp sm:col-span-2" placeholder="Areas comma" />
+          <input id="st_cT" class="inp sm:col-span-2" placeholder="Contact title HTML" />
+          <input id="st_cS" class="inp sm:col-span-2" placeholder="Contact subtitle" />
+          <div class="sm:col-span-2 sec-t mt-2">🔄 BEFORE / AFTER SLIDERS</div>
+          <input id="st_baT" class="inp sm:col-span-2" placeholder="Before/After title (HTML allowed)" />
+          <input id="st_baS" class="inp sm:col-span-2" placeholder="Before/After subtitle" />
+          <input id="st_ba1b" class="inp" placeholder="Card1 BEFORE img URL" /><input id="st_ba1a" class="inp" placeholder="Card1 AFTER img URL" />
+          <input id="st_ba2b" class="inp" placeholder="Card2 BEFORE img URL" /><input id="st_ba2a" class="inp" placeholder="Card2 AFTER img URL" />
+          <div class="sm:col-span-2 sec-t mt-2">🔗 SOCIAL LINKS</div>
+          <input id="st_socFb" class="inp" placeholder="Facebook URL" /><input id="st_socIg" class="inp" placeholder="Instagram URL" />
+          <input id="st_socBe" class="inp" placeholder="Behance URL" /><input id="st_socLi" class="inp" placeholder="LinkedIn URL" />
+          <div class="sm:col-span-2 sec-t mt-2">🔍 SEO (Google + share)</div>
+          <input id="st_seoT" class="inp sm:col-span-2" placeholder="SEO title" />
+          <textarea id="st_seoD" rows="2" class="inp sm:col-span-2" placeholder="SEO description"></textarea>
+          <input id="st_seoI" class="inp sm:col-span-2" placeholder="Share image URL (og:image)" />
+          <button class="btn-g sm:col-span-2 justify-center" onclick="saveSettings()">💾 Save Settings</button>
+        </div>
+        <div class="card p-5 mt-4">
+          <div class="font-extrabold">🔑 Change admin password</div>
+          <div class="grid sm:grid-cols-3 gap-2 mt-3"><input id="np_cur" type="password" class="inp" placeholder="Current password" autocomplete="current-password" /><input id="np_new" type="password" class="inp" placeholder="New (min 8 chars)" autocomplete="new-password" /><button class="btn-g justify-center" onclick="changePass()">Update</button></div>
+          <p class="text-[11px] text-gray-500 mt-2">Default <b>anik123</b> এখনই বদলে ফেলুন। নতুন পাসওয়ার্ড শুধু এই ব্রাউজারে সেভ থাকে।</p>
+        </div>
+        <div class="card p-5 mt-4 border-red-200 !border-red-300">
+          <div class="font-extrabold text-red-600">☠️ Danger zone</div>
+          <div class="flex flex-wrap gap-2 mt-3"><button class="btn-danger" onclick="resetAll()">Reset ALL demo data</button>
+          <button class="btn-o" onclick="exportData()">⬇ Export backup (JSON)</button>
+          <label class="btn-o cursor-pointer">⬆ Import backup<input id="importFile" type="file" accept=".json" class="hidden" /></label></div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<div id="toastBox" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] space-y-2 w-[92%] max-w-md" aria-live="polite"></div>
+
+<script>
+/* ================= CORE STORE (same keys as index.html) ================= */
+const U = id => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=800&q=60&fm=webp`;
+const DEFAULT_CONTENT = {
+  brand:'SAHIDUL ANIK', role:'INTERIOR DESIGNER', topbar:'Accepting Q1 2026 projects — Dhaka + remote',
+  phone:'+880 1712-345678', whatsapp:'8801712345678', email:'hello@sahidulanik.com',
+  addr:'House 12, Road 5, Banani, Dhaka 1213', hours:'• Sat–Thu, 10am–8pm',
+  foot:'Minimal, warm, liveable interiors across Bangladesh. Designed with light, built to last.',
+  heroBadge:'4.9 — 120+ happy clients in Dhaka',
+  heroTitle:'Designing calm,<br><em class="text-golddark">liveable</em> luxury<br>for modern homes.',
+  heroDesc:`I'm <b class="text-ink">Sahidul Anik</b> — interior designer specialising in minimal Scandinavian warmth with local practicality.`,
+  heroImg1:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=60&fm=webp',
+  heroImg2:'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=600&q=60&fm=webp',
+  heroImg3:'https://images.unsplash.com/photo-1556912167-f556f1f39fdf?auto=format&fit=crop&w=600&q=60&fm=webp',
+  heroCardT:'Banani Lakeview Flat', heroCardS:'2:40 min walkthrough', heroVideo:'https://www.youtube.com/embed/M7lc1UVf-VE',
+  stat1n:'120', stat1l:'PROJECTS DONE', stat2n:'8', stat2l:'EXPERIENCE', stat3n:'98', stat3l:'CLIENT SATISFACTION',
+  marquee:'FULL HOME DESIGN,KITCHEN & WARDROBE,OFFICE & RETAIL,3D VISUALISATION,TURNKEY EXECUTION,DHAKA • CHITTAGONG • SYLHET',
+  trustLabel:'TRUSTED FOR APARTMENTS, VILLAS, OFFICES & CAFÉS ACROSS DHAKA', trust:'Banani,Gulshan,Dhanmondi,Uttara,Purbachal',
+  servicesTitle:'Services, honest pricing.', servicesSub:'No hidden cost. Site visit free inside Dhaka.',
+  services:'🏠 | Full Home Design | 2–4 bed flats, duplex & villas. Layout to 3D to material list — A to Z. | from ৳120k\n🍳 | Kitchen & Wardrobe | Modular kitchen, pantry, wall wardrobe — marine ply that lasts 15 yrs. | from ৳95k\n💼 | Office & Shop | Workplaces, chambers, cafés & salons that bring customers back. | from ৳850/sqft\n🧊 | 3D & Costing Only | Photoreal 3D + BDT rate sheet for your own contractor. | from ৳25k\n🔨 | Turnkey Execution | We build it — civil, electric, carpentry, polish. You take keys. | ৳850/sqft\n🛋️ | Styling & Staging | One-day makeover: curtain, rug, art, plants. | from ৳35k',
+  pricing:[
+    {k:'ESSENTIAL', price:'৳45k', per:'/room', desc:'Single room makeover.', feat:'2D layout + colour palette,1x 3D view per room,Furniture shopping list,2 revisions'},
+    {k:'SIGNATURE HOME', price:'৳120k', per:'/full flat', desc:'2–3 bed full apartment.', feat:'Full 3D home (all rooms),Material + costing sheet (BDT),False ceiling & lighting plan,8 site visits,1-year support', hot:true},
+    {k:'LUXE TURNKEY', price:'৳850', per:'/sqft', desc:'Villa / office / café turnkey.', feat:'Everything in Signature,Civil + carpentry + MEP,Imported fittings,Dedicated PM,45–60 day handover'}
+  ],
+  processTitle:'From first meeting to keys — 4 steps.',
+  process:'☕ | Site Visit & Consultation | We measure, listen, note light + habits. Free quote in 48h.\n🎨 | Concept + 3D | Moodboard, 2–3 layouts, photoreal 3D. 2 revisions.\n🏗️ | Build & Supervise | Vetted vendors, weekly video updates.\n🔑 | Handover & Care | Deep clean, snag fix, 1-year support.',
+  auditT:'Not sure where to start? Get a free 20-min space audit.', auditS:`Send flat plan / video on WhatsApp — I'll reply with 3 quick wins + rough budget within 24h.`,
+  reviews:'Nusrat Jahan | Gulshan homeowner | Anik turned our dark flat into a light-filled home!\nTanvir Ahmed | Fintech CEO | Built in 40 days flat. Most professional vendor.\nPriya & Rahul | Dhanmondi couple | Kitchen still looks new after 1 year.\nShabnam Karim | Café owner | Sales up 34% after redesign.',
+  aboutPhoto:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=60&fm=webp',
+  aboutName:'Sahidul Anik', aboutRole:'Interior Designer • Dhaka, Bangladesh', aboutHeading:'Beauty that survives daily life.',
+  aboutBio:`8 years, 120+ homes & workplaces. Philosophy — <b>light first, storage second, showpiece last.</b>`,
+  skills:'Space Planning | 96\n3D Visualisation | 94\nBudget Control | 92\nSite Execution | 90',
+  award1t:'15+ awards', award1s:'BD Interior Expo, Houzz', award2t:'Eco materials', award2s:'Low-VOC, local wood',
+  journal:'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=600&q=60&fm=webp | BUDGET | 1,200 sqft flat in 5 lakh? | 2026 Dhaka rate card.\nhttps://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=600&q=60&fm=webp | LIGHTING | Why your flat looks dull | 2700K vs 4000K guide.\nhttps://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=60&fm=webp | SMALL SPACE | 300 sqft, 3 functions | Bunk + study + storage.',
+  contactTitle:`Let's make your space yours.`, contactSub:'Fill the form — I reply within 24 hours.',
+  contactAddr:'House 12, Road 5, Banani, Dhaka 1213', contactPhone:'+880 1712-345678', contactHours:'• Sat–Thu, 10am–8pm', contactEmail:'hello@sahidulanik.com',
+  video:'', heroVideo:'https://www.youtube.com/embed/M7lc1UVf-VE', walkthroughVideo:'', aboutVideo:'',
+  baTitle:'Same flat, with the Anik touch.', baSub:'Drag the slider left and right — see the before vs after magic.',
+  ba1before:'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=60&fm=webp',
+  ba1after:'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=800&q=60&fm=webp',
+  ba2before:'https://images.unsplash.com/photo-1556912167-f556f1f39fdf?auto=format&fit=crop&w=800&q=60&fm=webp',
+  ba2after:'https://images.unsplash.com/photo-1600489000022-c2086d79f9d4?auto=format&fit=crop&w=800&q=60&fm=webp',
+  heroTrust:'⭐ 4.9 Google Rating\n🏠 120+ Homes Handover\n🛡️ 1-Year Support',
+  socFb:'https://facebook.com/', socIg:'https://instagram.com/', socBe:'https://behance.net/', socLi:'https://linkedin.com/',
+  seoTitle:'SAHIDUL ANIK — Interior Designer | Dhaka',
+  seoDesc:'SAHIDUL ANIK — Premium interior designer in Dhaka. Minimal, warm, liveable luxury homes, offices & commercial spaces.',
+  seoImg:'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=60&fm=webp'
+};
+const DEFAULT_PROJECTS = [
+  {id:1,cat:'Living',title:'Banani Lakeview Serenity',loc:'Banani, Dhaka',client:'Rahman Family',year:2025,size:'1,800 sqft',budget:'৳8.2L',budgetNum:820000,duration:'55 days',style:'Scandi Warm',status:'Completed',featured:true,rating:'★★★★★ 5.0',video:'https://www.youtube.com/embed/M7lc1UVf-VE',images:[U('photo-1618221195710-dd6b41faaea6'),U('photo-1600210492486-724fe5c67fb0'),U('photo-1600607687939-ce8a6c25118c')],desc:'Family living room bathed in morning light.',challenge:'Dark partitioned flat, zero storage.',solution:'Opened axis, oak storage wall, lime-wash light.',materials:['Oak veneer','Quartz','Brass'],scope:['Layout','3D','Lighting'],quote:'Magic! 3 days early.'},
+  {id:2,cat:'Bedroom',title:'Scandi Warm Master Suite',loc:'Gulshan, Dhaka',client:'Tanvir & Orin',year:2025,size:'450 sqft',budget:'৳2.8L',budgetNum:280000,duration:'25 days',style:'Japandi',status:'Completed',featured:false,rating:'★★★★★',images:[U('photo-1616594039964-ae9021a400a0'),U('photo-1616486338812-3dadae4b4ace')],desc:'Sleep-first design.',challenge:'Noise + harsh light.',solution:'Acoustic slats + 2700K cove.',materials:['Walnut','Linen'],scope:['Wardrobe','Lighting'],quote:'Feels like a hotel.'},
+  {id:3,cat:'Kitchen',title:'Dhanmondi Chef’s Kitchen',loc:'Dhanmondi',client:'Priya & Rahul',year:2024,size:'220 sqft',budget:'৳3.5L',budgetNum:350000,duration:'30 days',style:'Modern',status:'Completed',featured:true,rating:'★★★★★',video:'https://www.youtube.com/embed/M7lc1UVf-VE',images:[U('photo-1556912167-f556f1f39fdf'),U('photo-1600489000022-c2086d79f9d4')],desc:'Heavy-cooking ready kitchen.',challenge:'Smell spread.',solution:'Re-routed duct + chimney.',materials:['Marine ply','Quartz'],scope:['Kitchen','Chimney'],quote:'No smell anymore.'},
+  {id:4,cat:'Office',title:'Fintech Studio',loc:'Gulshan Avenue',client:'PayQuick',year:2025,size:'3,200 sqft',budget:'৳22L',budgetNum:2200000,duration:'40 days',style:'Biophilic',status:'Completed',featured:true,rating:'★★★★★',video:'https://www.youtube.com/embed/M7lc1UVf-VE',images:[U('photo-1497366216548-37526070297c'),U('photo-1497366811353-6870744d04b2')],desc:'28-seat studio.',challenge:'60dB noise.',solution:'Pods + baffles.',materials:['Pods','Moss'],scope:['Planning','Acoustics'],quote:'Best vendor.'},
+  {id:5,cat:'Living',title:'Uttara Courtyard House',loc:'Uttara',client:'Hossain Family',year:2024,size:'2,600 sqft',budget:'৳14L',budgetNum:1400000,duration:'70 days',style:'Tropical',status:'Completed',featured:false,rating:'★★★★★',images:[U('photo-1600210492486-724fe5c67fb0')],desc:'Joint-family flow.',challenge:'Privacy needs.',solution:'Courtyard buffer.',materials:['Terrazzo','Cane'],scope:['Styling','Landscape'],quote:'House breathes.'},
+  {id:6,cat:'Bedroom',title:'Blush Kids Room',loc:'Mirpur DOHS',client:'Sadia',year:2025,size:'300 sqft',budget:'৳1.9L',budgetNum:190000,duration:'20 days',style:'Pastel',status:'Completed',featured:false,rating:'★★★★★',images:[U('photo-1616486338812-3dadae4b4ace')],desc:'Bunk + study.',challenge:'Toys everywhere.',solution:'Toy wall + bins.',materials:['Pine','Paint'],scope:['Bunk','Storage'],quote:'Kids clean up!'},
+  {id:7,cat:'Commercial',title:'Bean & Bloom Café',loc:'Banani 11',client:'Bean & Bloom',year:2024,size:'1,200 sqft',budget:'৳11L',budgetNum:1100000,duration:'45 days',style:'Cane',status:'Completed',featured:false,rating:'★★★★★',video:'https://www.youtube.com/embed/M7lc1UVf-VE',images:[U('photo-1524758631624-e2822e304c36')],desc:'48-cover café.',challenge:'Queue blocked.',solution:'Split flow + photo wall.',materials:['Cane','Terracotta'],scope:['Layout','Branding'],quote:'Sales up 34%.'},
+  {id:8,cat:'Kitchen',title:'Compact Rental Upgrade',loc:'Mohammadpur',client:'Arif',year:2026,size:'140 sqft',budget:'৳95k',budgetNum:95000,duration:'7 days',style:'Rental Hack',status:'Completed',featured:false,rating:'★★★★★',images:[U('photo-1600489000022-c2086d79f9d4')],desc:'Reversible makeover.',challenge:'No civil work.',solution:'Vinyl + shelves.',materials:['Vinyl','Pine'],scope:['Wrap','Shelves'],quote:'Looks new!'},
+  {id:9,cat:'Office',title:'Lawyers’ Chamber',loc:'Motijheel',client:'A. Khan',year:2024,size:'900 sqft',budget:'৳7.5L',budgetNum:750000,duration:'35 days',style:'Academia',status:'Ongoing',featured:false,rating:'★★★★★',images:[U('photo-1497366811353-6870744d04b2')],desc:'Trust chamber.',challenge:'Need gravitas.',solution:'Library wall.',materials:['Walnut','Leather'],scope:['Chamber','Library'],quote:'Clients impressed.'}
+];
+let C={}, projects=[], editPjId=null, editBlogIx=-1, tmpGallery=[];
+try{ C=Object.assign({},DEFAULT_CONTENT,JSON.parse(localStorage.getItem('sa_content_v1')||'{}')); }catch(e){ C={...DEFAULT_CONTENT}; }
+try{
+  const v2=JSON.parse(localStorage.getItem('sa_projects_v2')||'null');
+  projects = v2 && v2.length ? v2 : DEFAULT_PROJECTS.map(normP);
+}catch(e){ projects=DEFAULT_PROJECTS.map(normP); }
+function normP(p){ const imgs=(p.images||[]).filter(Boolean); while(imgs.length<1)imgs.push(U('photo-1600607687939-ce8a6c25118c')); let vd=p.video||''; if(vd.includes('dQw4w9WgXcQ')) vd=vd.replaceAll('dQw4w9WgXcQ','M7lc1UVf-VE'); return {id:p.id??Date.now(),cat:p.cat||'Living',title:p.title||'Untitled',loc:p.loc||'Dhaka',client:p.client||'Private',year:p.year||2025,size:p.size||'—',budget:p.budget||'—',budgetNum:p.budgetNum??parseB(p.budget),duration:p.duration||'—',style:p.style||'—',status:p.status||'Completed',featured:!!p.featured,rating:p.rating||'★★★★★',images:imgs.slice(0,8),video:vd,desc:p.desc||'',challenge:p.challenge||'',solution:p.solution||'',materials:p.materials||[],scope:p.scope||[],quote:p.quote||''}; }
+try{
+  let rep=false;
+  ['video','heroVideo','walkthroughVideo','aboutVideo'].forEach(k=>{ if(C[k]&&String(C[k]).includes('dQw4w9WgXcQ')){ C[k]=String(C[k]).replaceAll('dQw4w9WgXcQ','M7lc1UVf-VE'); rep=true; } });
+  projects.forEach(p=>{ if(p.video&&String(p.video).includes('dQw4w9WgXcQ')){ p.video=String(p.video).replaceAll('dQw4w9WgXcQ','M7lc1UVf-VE'); rep=true; } });
+  if(rep){ saveC(); saveP(); }
+}catch(e){}
+function parseB(s){ const m=String(s||'').match(/([\d.]+)\s*L/i); if(m)return parseFloat(m[1])*100000; const k=String(s||'').match(/([\d,]+)/); return k?parseInt(k[1].replace(/,/g,'')):0; }
+function parsePipe(t){ return String(t||'').split('\n').map(l=>l.trim()).filter(Boolean).map(l=>l.split('|').map(s=>s.trim())); }
+function saveC(){ try{ localStorage.setItem('sa_content_v1',JSON.stringify(C)); }catch(err){ toast('⚠️ Storage full — could not save.'); } }
+function saveP(){ try{ localStorage.setItem('sa_projects_v2',JSON.stringify(projects)); }catch(err){ toast('⚠️ Storage full — project could not be saved. Try fewer/smaller photos.'); } }
+function getLeads(){ try{return JSON.parse(localStorage.getItem('sa_leads_v1')||'[]')}catch(e){return[]} }
+function setLeads(l){ try{ localStorage.setItem('sa_leads_v1',JSON.stringify(l)); }catch(err){ toast('⚠️ Storage full — could not save.'); } }
+function getMedia(){ try{return JSON.parse(localStorage.getItem('sa_media_v1')||'[]')}catch(e){return[]} }
+function setMedia(m){ try{ localStorage.setItem('sa_media_v1',JSON.stringify(m)); }catch(err){ setMediaQuotaFallback(m); } }
+function setMediaQuotaFallback(m){ try{ localStorage.setItem('sa_media_v1',JSON.stringify((m||[]).slice(0,20))); toast('⚠️ Media library trimmed — storage full.'); }catch(err2){ toast('⚠️ Storage full — media not saved.'); } }
+
+/* ================= AUTH + NAV ================= */
+function saHash(s){ let h=5381; s=String(s||''); for(let i=0;i<s.length;i++){ h=(((h<<5)+h)+s.charCodeAt(i))|0; } return 'h'+(h>>>0).toString(16); }
+function getAdminHash(){ try{ return localStorage.getItem('sa_admin_hash') || saHash('anik123'); }catch(e){ return saHash('anik123'); } }
+function setAdminHash(h){ try{ localStorage.setItem('sa_admin_hash', h); }catch(e){} }
+if(!localStorage.getItem('sa_admin_hash')) setAdminHash(saHash('anik123'));
+function isLocked(){ try{ return Date.now() < (+localStorage.getItem('sa_admin_lock')||0); }catch(e){ return false; } }
+if(sessionStorage.getItem('sa_admin_auth')==='1'){
+  try{ const t=+sessionStorage.getItem('sa_admin_time')||0; if(Date.now()-t>60*60*1000){ sessionStorage.removeItem('sa_admin_auth'); } else document.getElementById('loginWrap').style.display='none'; }catch(e){ document.getElementById('loginWrap').style.display='none'; }
+}
+function doLogin(){
+  if(isLocked()) return toast('🔒 Locked 5 min — too many wrong tries.');
+  const v=document.getElementById('loginPass').value||'';
+  if(saHash(v)===getAdminHash()){
+    try{ localStorage.setItem('sa_admin_fail','0'); }catch(e){}
+    document.getElementById('loginPass').value='';
+    sessionStorage.setItem('sa_admin_auth','1');
+    try{ sessionStorage.setItem('sa_admin_time', String(Date.now())); }catch(e){}
+    document.getElementById('loginWrap').style.display='none'; toast('Welcome back, Anik! 🎉');
+  } else {
+    let f=0; try{ f=(+localStorage.getItem('sa_admin_fail')||0)+1; localStorage.setItem('sa_admin_fail',String(f)); }catch(e){ f=1; }
+    if(f>=5){ try{ localStorage.setItem('sa_admin_lock',String(Date.now()+5*60*1000)); localStorage.setItem('sa_admin_fail','0'); }catch(e){} return toast('🔒 5 wrong tries — locked 5 min.'); }
+    toast('❌ Wrong password ('+(5-f)+' tries left)');
+  }
+}
+document.getElementById('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+function signOut(){ sessionStorage.removeItem('sa_admin_auth'); location.reload(); }
+const TITLES={dashboard:'Dashboard',projects:'Projects & Case Studies',services:'Services & Pricing',skills:'Skills & Toolbelt',blog:'Blog CMS',reviews:'Testimonials',process:'Experiences / Process',inbox:'Contact Inbox',walkthrough:'Walkthrough Videos',media:'Media Library',profile:'Profile',settings:'Site Settings'};
+function go(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.getElementById('pg-'+p)?.classList.add('active');
+  document.querySelectorAll('#sideMenu .side-link').forEach(x=>x.classList.toggle('active',x.dataset.p===p));
+  document.getElementById('pageTitle').textContent=TITLES[p]||p;
+  syncMobileMenu();
+  if(p==='dashboard')renderDash(); if(p==='projects')renderPjList(); if(p==='services')renderSvcAdmin();
+  if(p==='skills')renderSkillsAdmin(); if(p==='blog')renderBlogAdmin(); if(p==='reviews')renderRevAdmin();
+  if(p==='process')renderProcAdmin(); if(p==='inbox')renderInbox(); if(p==='walkthrough')renderWalkthroughAdmin();
+  if(p==='media')renderMedia(); if(p==='profile')fillProfile(); if(p==='settings')fillSettings();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('#sideMenu .side-link').forEach(x=>x.onclick=()=>go(x.dataset.p));
+
+/* ================= IMAGE COMPRESS UPLOAD ================= */
+function fileToDataURL(file, cb){
+  const r=new FileReader();
+  r.onload=e=>{ const img=new Image(); img.onload=()=>{ const max=900; let{width:w,height:h}=img; const sc=Math.min(1,max/Math.max(w,h)); w=Math.round(w*sc); h=Math.round(h*sc);
+    const cv=document.createElement('canvas'); cv.width=w; cv.height=h; cv.getContext('2d').drawImage(img,0,0,w,h);
+    cb(cv.toDataURL('image/jpeg',.82)); }; img.src=e.target.result; };
+  r.readAsDataURL(file);
+}
+
+/* ================= DASHBOARD ================= */
+function renderDash(){
+  const leads=getLeads(), media=getMedia();
+  const svc=parsePipe(C.services).length, rev=parsePipe(C.reviews).length;
+  document.getElementById('dashStats').innerHTML=[
+    ['🖼️',projects.length,'Projects'],['📩',leads.length,'Bookings'],['💼',svc,'Services'],['⭐',rev,'Reviews']
+  ].map(([i,n,l])=>`<div class="card p-4 text-center"><div class="text-2xl">${i}</div><div class="text-2xl font-extrabold">${n}</div><div class="text-xs text-gray-500 font-bold">${l}</div></div>`).join('');
+  document.getElementById('dashLeads').innerHTML=leads.slice(0,3).map(l=>`<div class="card-green p-3"><b>${esc(l.name)}</b> <span class="text-gray-500">• ${esc(l.phone)}</span><div class="text-xs text-gray-500">${esc(l.type)} • ${esc(l.date||'')}</div></div>`).join('')||'<div class="text-gray-400 text-sm">No bookings yet.</div>';
+  document.getElementById('inboxBadge').textContent=leads.length;
+  document.getElementById('headName').textContent=C.brand; document.getElementById('avatarTx').textContent=C.brand.split(' ').map(w=>w[0]).join('').slice(0,2);
+}
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+/* ================= PROJECTS ================= */
+function renderPjList(){
+  const q=(document.getElementById('pjSearch').value||'').toLowerCase(), f=document.getElementById('pjFilter').value;
+  const list=projects.filter(p=>(!f||p.cat===f)&&(!q||(p.title+p.loc+p.client).toLowerCase().includes(q)));
+  document.getElementById('pjList').innerHTML=list.map(p=>`
+    <div class="card p-3 flex gap-3">
+      <img src="${p.images[0]}" class="w-20 h-20 rounded-xl object-cover flex-shrink-0" />
+      <div class="flex-1 min-w-0"><div class="font-bold text-sm truncate">${p.title} ${p.featured?'⭐':''}</div>
+      <div class="text-xs text-gray-500">${p.cat} • ${p.loc} • ${p.budget} • 📷${p.images.length} • ${p.status}</div>
+      <div class="flex gap-2 mt-2"><button class="btn-o !py-1.5 !px-3 !text-xs" onclick="editProject(${p.id})">✏️ Edit</button>
+      <button class="btn-o !py-1.5 !px-3 !text-xs" onclick="dupProject(${p.id})">⧉ Duplicate</button>
+      <button class="btn-danger" onclick="delProject(${p.id})">Delete</button></div></div>
+    </div>`).join('')||'<div class="text-gray-400">No projects found.</div>';
+}
+function startAddProject(){ editPjId=null; tmpGallery=[]; ['p_title','p_loc','p_client','p_size','p_budget','p_dur','p_year','p_style','p_mats','p_scope','p_desc','p_ch','p_so','p_quote','p_urladd','p_video'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; }); document.getElementById('p_cat').selectedIndex=0; document.getElementById('p_status').selectedIndex=0; document.getElementById('p_year').value=new Date().getFullYear(); document.getElementById('p_feat').checked=false; document.getElementById('pjEdTitle').textContent='＋ New Project'; paintTmpGallery(); document.getElementById('p_vidPrev').innerHTML=''; document.getElementById('pjEditor').classList.remove('hidden'); window.scrollTo({top:document.getElementById('pjEditor').offsetTop-80,behavior:'smooth'}); }
+function closePjEditor(){ document.getElementById('pjEditor').classList.add('hidden'); editPjId=null; }
+function paintTmpGallery(){
+  document.getElementById('p_gallery').innerHTML=tmpGallery.map((u,i)=>`
+    <div class="relative"><img src="${u}" class="w-20 h-16 rounded-xl object-cover border-2 ${i===0?'border-emerald-600':'border-emerald-100'}" />
+    <button onclick="tmpGallery.splice(${i},1);paintTmpGallery()" class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-600 text-white text-xs">✕</button>
+    ${i>0?`<button onclick="tmpGallery.splice(${i-1},0,tmpGallery.splice(${i},1)[0]);paintTmpGallery()" class="absolute -bottom-2 -right-2 w-6 h-6 rounded-full bg-emerald-700 text-white text-xs">‹</button>`:''}
+    ${i===0?'<span class="absolute bottom-0 left-0 text-[9px] font-bold bg-emerald-700 text-white px-1.5 rounded">COVER</span>':''}</div>`).join('')||'<span class="text-xs text-gray-400">No photos yet — upload or add URL.</span>';
+}
+document.getElementById('p_upload').addEventListener('change',e=>{ [...e.target.files].forEach(f=>fileToDataURL(f,d=>{ tmpGallery.push(d); if(tmpGallery.length>8)tmpGallery=tmpGallery.slice(0,8); paintTmpGallery(); pushMedia(d); })); e.target.value=''; });
+function addPjUrl(){ const u=document.getElementById('p_urladd').value.trim(); if(!u)return toast('Paste a URL first'); tmpGallery.push(u); document.getElementById('p_urladd').value=''; paintTmpGallery(); }
+function editProject(id){ const p=projects.find(x=>x.id===id); if(!p)return; editPjId=id; tmpGallery=[...(p.images||[])];
+  document.getElementById('p_title').value=p.title; document.getElementById('p_cat').value=p.cat; document.getElementById('p_loc').value=p.loc;
+  document.getElementById('p_client').value=p.client; document.getElementById('p_size').value=p.size; document.getElementById('p_budget').value=p.budget;
+  document.getElementById('p_dur').value=p.duration; document.getElementById('p_year').value=p.year; document.getElementById('p_style').value=p.style;
+  document.getElementById('p_status').value=p.status; document.getElementById('p_mats').value=(p.materials||[]).join(', '); document.getElementById('p_scope').value=(p.scope||[]).join(', ');
+  document.getElementById('p_desc').value=p.desc; document.getElementById('p_ch').value=p.challenge; document.getElementById('p_so').value=p.solution;
+  document.getElementById('p_quote').value=p.quote; document.getElementById('p_feat').checked=!!p.featured; document.getElementById('p_video').value=p.video||''; prevVid('p_video','p_vidPrev');
+  document.getElementById('pjEdTitle').textContent='✏️ Edit: '+p.title; paintTmpGallery();
+  document.getElementById('pjEditor').classList.remove('hidden'); window.scrollTo({top:0,behavior:'smooth'});
+}
+function savePjEditor(){
+  const t=document.getElementById('p_title').value.trim(); if(!t)return toast('Title required'); if(!tmpGallery.length)return toast('Add at least 1 photo');
+  const b=document.getElementById('p_budget').value.trim()||'—';
+  const d=normP({title:t,cat:document.getElementById('p_cat').value,images:tmpGallery.slice(0,8),loc:document.getElementById('p_loc').value.trim()||'Dhaka',client:document.getElementById('p_client').value.trim()||'Private',size:document.getElementById('p_size').value.trim()||'—',budget:b,budgetNum:parseB(b),duration:document.getElementById('p_dur').value.trim()||'—',year:parseInt(document.getElementById('p_year').value)||2025,style:document.getElementById('p_style').value.trim()||'—',status:document.getElementById('p_status').value,materials:document.getElementById('p_mats').value.split(',').map(s=>s.trim()).filter(Boolean),scope:document.getElementById('p_scope').value.split(',').map(s=>s.trim()).filter(Boolean),desc:document.getElementById('p_desc').value.trim(),challenge:document.getElementById('p_ch').value.trim(),solution:document.getElementById('p_so').value.trim(),quote:document.getElementById('p_quote').value.trim(),featured:document.getElementById('p_feat').checked,video:document.getElementById('p_video').value.trim()});
+  if(editPjId){ const i=projects.findIndex(x=>x.id===editPjId); d.id=editPjId; projects[i]=d; toast('✅ Project updated'); } else { d.id=Date.now(); projects.unshift(d); toast(`🎉 Added with ${d.images.length} photos`); }
+  saveP(); closePjEditor(); renderPjList(); renderDash();
+}
+function delProject(id){ if(!confirm('Delete this project?'))return; projects=projects.filter(x=>x.id!==id); saveP(); renderPjList(); renderDash(); }
+function dupProject(id){ const p=projects.find(x=>x.id===id); if(!p)return; const c=JSON.parse(JSON.stringify(p)); c.id=Date.now(); c.title=p.title+' (Copy)'; projects.unshift(c); saveP(); renderPjList(); toast('⧉ Duplicated'); }
+
+/* ================= SERVICES ================= */
+function renderSvcAdmin(){
+  document.getElementById('s_secT').value=C.servicesTitle; document.getElementById('s_secS').value=C.servicesSub;
+  const arr=parsePipe(C.services);
+  document.getElementById('svcList').innerHTML=arr.map((s,i)=>`<div class="card-green p-3 flex items-center gap-3 text-sm"><span class="text-xl">${s[0]}</span><div class="flex-1"><b>${s[1]}</b><div class="text-xs text-gray-500">${s[2]} • <b class="text-emerald-700">${s[3]}</b></div></div><button class="btn-danger" onclick="delService(${i})">Delete</button></div>`).join('');
+  document.getElementById('priceForms').innerHTML=C.pricing.map((p,i)=>`
+    <div class="card-green p-3 grid gap-2"><b class="text-sm">Package ${i+1} ${p.hot?'🔥':''}</b>
+    <input id="pp${i}k" class="inp" value="${p.k}" /><input id="pp${i}pr" class="inp" value="${p.price}" /><input id="pp${i}per" class="inp" value="${p.per}" />
+    <input id="pp${i}d" class="inp" value="${p.desc}" /><textarea id="pp${i}f" rows="3" class="inp">${p.feat}</textarea>
+    <label class="text-xs font-bold"><input type="checkbox" id="pp${i}hot" ${p.hot?'checked':''} class="accent-emerald-700" /> Most popular</label>
+    <button class="btn-danger" onclick="delPricing(${i})">Delete package</button></div>`).join('')+`<button class="btn-o" onclick="addPricing()">＋ Add package</button>`;
+}
+function addService(){ const i=document.getElementById('s_i').value.trim()||'🏠',t=document.getElementById('s_t').value.trim(),d=document.getElementById('s_d').value.trim(),p=document.getElementById('s_p').value.trim(); if(!t)return toast('Title required'); C.services=(C.services?C.services+'\n':'')+`${i} | ${t} | ${d} | ${p}`; saveC(); renderSvcAdmin(); ['s_i','s_t','s_d','s_p'].forEach(id=>document.getElementById(id).value=''); toast('Service added — Save section to publish'); }
+function delService(i){ const a=parsePipe(C.services); a.splice(i,1); C.services=a.map(r=>r.join(' | ')).join('\n'); saveC(); renderSvcAdmin(); }
+function saveServicesSec(){ C.servicesTitle=document.getElementById('s_secT').value; C.servicesSub=document.getElementById('s_secS').value; saveC(); toast('✅ Services saved — public site updated'); }
+function savePricing(){ C.pricing=C.pricing.map((p,i)=>({k:document.getElementById('pp'+i+'k').value,price:document.getElementById('pp'+i+'pr').value,per:document.getElementById('pp'+i+'per').value,desc:document.getElementById('pp'+i+'d').value,feat:document.getElementById('pp'+i+'f').value,hot:document.getElementById('pp'+i+'hot').checked})); saveC(); toast('✅ Pricing saved'); }
+function delPricing(i){ C.pricing.splice(i,1); saveC(); renderSvcAdmin(); }
+function addPricing(){ C.pricing.push({k:'NEW',price:'৳50k',per:'/item',desc:'New package',feat:'Feature 1,Feature 2',hot:false}); saveC(); renderSvcAdmin(); }
+
+/* ================= SKILLS ================= */
+function renderSkillsAdmin(){ const a=parsePipe(C.skills); document.getElementById('skillList').innerHTML=a.map((s,i)=>`<div class="card-green p-3 flex items-center gap-3 text-sm"><b class="flex-1">${s[0]}</b><span class="stat-pill">${s[1]}%</span><input type="range" min="1" max="100" value="${s[1]}" class="w-32 accent-emerald-700" oninput="updSkill(${i},this.value)" /><button class="btn-danger" onclick="delSkill(${i})">Delete</button></div>`).join(''); }
+function updSkill(i,v){ const a=parsePipe(C.skills); a[i][1]=v; C.skills=a.map(r=>r.join(' | ')).join('\n'); saveC(); renderSkillsAdmin(); }
+function addSkill(){ const t=document.getElementById('sk_t').value.trim(),v=document.getElementById('sk_v').value||80; if(!t)return toast('Name required'); C.skills+='\n'+t+' | '+v; saveC(); renderSkillsAdmin(); document.getElementById('sk_t').value=''; }
+function delSkill(i){ const a=parsePipe(C.skills); a.splice(i,1); C.skills=a.map(r=>r.join(' | ')).join('\n'); saveC(); renderSkillsAdmin(); }
+function saveSkills(){ toast('✅ Skills saved'); }
+
+/* ================= BLOG ================= */
+function renderBlogAdmin(){ const a=parsePipe(C.journal); document.getElementById('blogList').innerHTML=a.map((b,i)=>`<div class="card p-3 flex gap-3 text-sm"><img src="${b[0]}" class="w-20 h-16 rounded-xl object-cover" /><div class="flex-1"><span class="stat-pill !text-[10px]">${b[1]}</span><b class="block mt-1">${b[2]}</b><div class="text-xs text-gray-500">${b[3]}</div></div><div class="flex flex-col gap-1"><button class="btn-o !py-1 !text-xs" onclick="editBlog(${i})">Edit</button><button class="btn-danger" onclick="delBlog(${i})">Delete</button></div></div>`).join(''); }
+function editBlog(i){ const b=parsePipe(C.journal)[i]; document.getElementById('b_img').value=b[0]; document.getElementById('b_tag').value=b[1]; document.getElementById('b_t').value=b[2]; document.getElementById('b_d').value=b[3]; editBlogIx=i; }
+function resetBlogForm(){ editBlogIx=-1; ['b_img','b_tag','b_t','b_d'].forEach(id=>document.getElementById(id).value=''); }
+function saveBlog(){ const r=[document.getElementById('b_img').value.trim(),document.getElementById('b_tag').value.trim()||'BLOG',document.getElementById('b_t').value.trim(),document.getElementById('b_d').value.trim()].join(' | '); if(!document.getElementById('b_t').value.trim())return toast('Title required'); const a=parsePipe(C.journal); if(editBlogIx>=0)a[editBlogIx]=r.split('|').map(s=>s.trim()); else a.push(r.split('|').map(s=>s.trim())); C.journal=a.map(x=>x.join(' | ')).join('\n'); saveC(); renderBlogAdmin(); resetBlogForm(); toast('✅ Blog saved'); }
+function delBlog(i){ const a=parsePipe(C.journal); a.splice(i,1); C.journal=a.map(x=>x.join(' | ')).join('\n'); saveC(); renderBlogAdmin(); }
+
+/* ================= REVIEWS ================= */
+function renderRevAdmin(){ const a=parsePipe(C.reviews); document.getElementById('revList').innerHTML=a.map((r,i)=>`<div class="card p-4 text-sm"><b>${r[0]}</b> <span class="text-gray-500 text-xs">• ${r[1]}</span><p class="mt-1 text-gray-600">“${r[2]}”</p><button class="btn-danger mt-2" onclick="delReview(${i})">Delete</button></div>`).join(''); }
+function addReview(){ const n=document.getElementById('r_n').value.trim(),r=document.getElementById('r_r').value.trim(),t=document.getElementById('r_t').value.trim(); if(!n||!t)return toast('Name + review required'); C.reviews+='\n'+n+' | '+r+' | '+t; saveC(); renderRevAdmin(); ['r_n','r_r','r_t'].forEach(id=>document.getElementById(id).value=''); toast('✅ Review added'); }
+function delReview(i){ const a=parsePipe(C.reviews); a.splice(i,1); C.reviews=a.map(x=>x.join(' | ')).join('\n'); saveC(); renderRevAdmin(); }
+
+/* ================= PROCESS ================= */
+function renderProcAdmin(){ document.getElementById('pr_title').value=C.processTitle; document.getElementById('pr_aT').value=C.auditT; document.getElementById('pr_aS').value=C.auditS; const a=parsePipe(C.process); document.getElementById('procList').innerHTML=a.map((p,i)=>`<div class="card-green p-3 flex items-center gap-3 text-sm"><span class="text-xl">${p[0]}</span><div class="flex-1"><b>${p[1]}</b><div class="text-xs text-gray-500">${p[2]}</div></div><button class="btn-danger" onclick="delProc(${i})">Delete</button></div>`).join(''); }
+function addProc(){ const i=document.getElementById('pr_i').value.trim()||'✦',t=document.getElementById('pr_t').value.trim(),d=document.getElementById('pr_d').value.trim(); if(!t)return toast('Title required'); C.process+='\n'+i+' | '+t+' | '+d; saveC(); renderProcAdmin(); }
+function delProc(i){ const a=parsePipe(C.process); a.splice(i,1); C.process=a.map(x=>x.join(' | ')).join('\n'); saveC(); renderProcAdmin(); }
+function saveProcess(){ C.processTitle=document.getElementById('pr_title').value; C.auditT=document.getElementById('pr_aT').value; C.auditS=document.getElementById('pr_aS').value; saveC(); toast('✅ Process saved'); }
+
+/* ================= INBOX ================= */
+function renderInbox(){ const l=getLeads(); document.getElementById('inboxBadge').textContent=l.length; document.getElementById('inboxList').innerHTML=l.map((x,i)=>`<div class="card p-4 text-sm"><div class="flex justify-between"><b>${esc(x.name)} <span class="font-normal text-gray-500">• ${esc(x.phone)}</span></b><button class="text-red-500 text-xs font-bold" onclick="delLead(${i})">Remove</button></div><div class="text-xs text-gray-500 mt-1">${esc(x.type)} • ${esc(x.budget)} • ${esc(x.plan)} • ${esc(x.date||'')}</div>${x.msg?`<div class="card-green p-3 mt-2">${esc(x.msg)}</div>`:''}<a target="_blank" class="text-emerald-700 font-bold text-xs mt-2 inline-block" href="https://wa.me/${(x.phone||'').replace(/[^0-9]/g,'').slice(-11)}?text=${encodeURIComponent('Hi '+x.name+'! Thanks for booking — Anik here.')}">Reply on WhatsApp →</a></div>`).join('')||'<div class="text-gray-400">No bookings yet.</div>'; }
+function delLead(i){ const l=getLeads(); l.splice(i,1); setLeads(l); renderInbox(); renderDash(); }
+
+/* ================= WALKTHROUGH ADMIN ================= */
+function renderWalkthroughAdmin(){
+  document.getElementById('st_heroVideo').value=C.heroVideo||C.video||'';
+  document.getElementById('st_walkthroughVideo').value=C.walkthroughVideo||'';
+  document.getElementById('st_aboutVideo').value=C.aboutVideo||'';
+  const vids = projects.filter(p=>p.video);
+  document.getElementById('walkthroughProjectList').innerHTML = vids.length ? vids.map(p=>`
+    <div class="card-green p-3 flex items-center gap-3 text-sm">
+      <img src="${p.images[0]}" class="w-14 h-14 rounded-xl object-cover" />
+      <div class="flex-1"><b>${p.title}</b><div class="text-xs text-gray-500">${p.cat} • ${p.loc}</div></div>
+      <a href="${p.video}" target="_blank" class="btn-o !py-1.5 !px-3 !text-xs">Open Video</a>
+    </div>`).join('') : '<div class="text-gray-400">No project videos yet. Add video URL in project editor.</div>';
+}
+function saveWalkthrough(){
+  C.heroVideo=document.getElementById('st_heroVideo').value.trim();
+  C.video=C.heroVideo;
+  C.walkthroughVideo=document.getElementById('st_walkthroughVideo').value.trim();
+  C.aboutVideo=document.getElementById('st_aboutVideo').value.trim();
+  saveC(); toast('✅ Walkthrough videos saved — hero + projects updated'); renderWalkthroughAdmin();
+}
+/* ================= VIDEO LINK CHECKER (same rules as public site) ================= */
+function normVid(url){
+  let u=String(url||'').trim();
+  const out={type:'none',embed:'',watch:''};
+  if(!u) return out;
+  if(u.includes('dQw4w9WgXcQ')) u=u.split('dQw4w9WgXcQ').join('M7lc1UVf-VE');
+  const getQ=n=>{ const mm=u.match(new RegExp('[?&]'+n+'=([^&#]+)')); return mm?decodeURIComponent(mm[1]):null; };
+  const isYT=/youtu\.be|youtube(-nocookie)?\.com|music\.youtube\.com|m\.youtube\.com/i.test(u);
+  let yid=isYT?getQ('v'):null;
+  if(!yid){ const pm=u.match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:shorts|live|embed|v)\/)([A-Za-z0-9_-]{6,})/i); if(pm&&isYT) yid=pm[1]; }
+  if(yid){ out.type='youtube'; out.id=yid; out.thumb=`https://i.ytimg.com/vi/${yid}/hqdefault.jpg`; out.embed=`https://www.youtube-nocookie.com/embed/${yid}?rel=0`; out.watch=`https://www.youtube.com/watch?v=${yid}`; return out; }
+function loadYtPrev(el){
+  const f=document.createElement('iframe');
+  f.src=el.dataset.src; f.className='w-full aspect-video rounded-xl bg-black'; f.frameBorder='0';
+  f.setAttribute('allow','accelerometer; autoplay; encrypted-media; picture-in-picture'); f.allowFullscreen=true;
+  el.replaceWith(f);
+}
+  let vm=u.match(/vimeo\.com\/(?:video\/)?(\d{6,})/);
+  if(vm){ out.type='vimeo'; out.embed=`https://player.vimeo.com/video/${vm[1]}?autoplay=1`; out.watch=`https://vimeo.com/${vm[1]}`; return out; }
+  let did=null, dm=u.match(/drive\.google\.com\/file\/d\/([^\/ ?#]+)/);
+  if(dm) did=dm[1]; else if(/drive\.google\.com/i.test(u)) did=getQ('id');
+  if(did){ out.type='drive'; out.embed=`https://drive.google.com/file/d/${did}/preview`; out.watch=`https://drive.google.com/file/d/${did}/view`; return out; }
+  let lm=u.match(/loom\.com\/(?:share|embed)\/([A-Za-z0-9]+)/);
+  if(lm){ out.type='loom'; out.embed=`https://www.loom.com/embed/${lm[1]}`; out.watch=u.split('?')[0]; return out; }
+  if(/\.(mp4|webm|ogg|mov)(\?|#|$)/i.test(u)||u.includes('storage.googleapis.com')||/dropbox\.com/i.test(u)){ out.type='mp4'; out.embed=u.replace(/([?&])dl=0/,'$1raw=1'); out.watch=u; return out; }
+  if(/facebook\.com|fb\.watch|tiktok\.com|instagram\.com/i.test(u)){ out.type='external'; out.watch=u; return out; }
+  if(/^https?:\/\//i.test(u)){ out.type='iframe'; out.embed=u; out.watch=u; return out; }
+  return out;
+}
+function prevVid(inputId, boxId){
+  const box=document.getElementById(boxId); if(!box) return;
+  const n=normVid(document.getElementById(inputId).value);
+  if(n.type==='none'){ box.innerHTML=''; return; }
+  const badge={youtube:'🔴 YouTube OK',vimeo:'🟣 Vimeo OK',drive:'🟡 Drive OK',loom:'🟣 Loom OK',mp4:'🎬 Direct video OK',iframe:'🌐 Custom embed',external:'⛔ বাইরে খুলবে'}[n.type]||n.type;
+  if(n.type==='external'){ box.innerHTML=`<div class="card p-3 text-xs">${badge} — এই লিংক (Facebook/TikTok) সাইটে play হবে না। YouTube / Drive / MP4 লিংক দাও। <a class="text-emerald-700 font-bold" target="_blank" href="${esc(n.watch)}">বাইরে খুলো →</a></div>`; return; }
+  let inner;
+  if(n.type==='mp4'){
+    inner = `<video src="${esc(n.embed)}" controls playsinline class="w-full aspect-video bg-black rounded-xl"></video>`;
+  } else if(n.type==='youtube'){
+    const autoSrc = n.embed + (n.embed.includes('?')?'&':'?') + 'autoplay=1';
+    inner = `<div class="relative cursor-pointer aspect-video bg-black rounded-xl overflow-hidden" data-src="${esc(autoSrc)}" onclick="loadYtPrev(this)"><img src="${esc(n.thumb)}" class="absolute inset-0 w-full h-full object-cover" loading="lazy" alt="Video thumbnail" /><span class="absolute inset-0 flex items-center justify-center"><span class="w-14 h-14 rounded-full bg-white/95 flex items-center justify-center text-xl shadow-xl">▶</span></span></div><div class="text-[11px] text-gray-500 mt-1">Thumbnail-এ ক্লিক করলে ভিডিও load হবে। <a class="text-emerald-700 font-bold" target="_blank" href="${esc(n.watch)}">YouTube-তে খুলো →</a></div>`;
+  } else {
+    inner = `<iframe src="${esc(n.embed)}" class="w-full aspect-video rounded-xl bg-black" frameborder="0" allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+  }
+  box.innerHTML=`<div class="card-green p-3"><div class="text-xs font-extrabold text-emerald-800 mb-2">${badge} — নিচে preview দেখো:</div>${inner}</div>`;
+}
+
+/* ================= MEDIA ================= */
+function pushMedia(url){ const m=getMedia(); m.unshift({url,date:new Date().toLocaleString()}); setMedia(m.slice(0,100)); }
+let mediaCache=[];
+function renderMedia(){
+  const custom=getMedia().map(x=>x.url);
+  const fromSite=[C.heroImg1,C.heroImg2,C.heroImg3,C.aboutPhoto,...parsePipe(C.journal).map(b=>b[0]),...projects.flatMap(p=>p.images)];
+  const all=[...custom,...fromSite].filter((u,i,a)=>u&&a.indexOf(u)===i).slice(0,60);
+  mediaCache=all;
+  document.getElementById('mediaGrid').innerHTML=all.map((u,i)=>`<div class="card p-2"><img src="${esc(u)}" class="w-full h-28 object-cover rounded-xl" loading="lazy" alt="Media ${i+1}" /><div class="flex gap-1 mt-2"><button class="btn-o !py-1 !px-2 !text-[11px] flex-1" onclick="copyMedia(${i})">Copy</button>${i<custom.length?`<button class="btn-danger !px-2" aria-label="Delete media" onclick="delMediaIx(${i})">✕</button>`:''}</div></div>`).join('');
+}
+function copyMedia(i){ const u=mediaCache[i]; if(!u) return; if(navigator.clipboard) navigator.clipboard.writeText(u).then(()=>toast('🔗 URL copied')).catch(()=>toast('❌ Copy failed')); else toast('❌ Copy not supported'); }
+function delMediaIx(i){ const u=mediaCache[i]; if(u) delMedia(u); }
+document.getElementById('m_upload').addEventListener('change',e=>{ [...e.target.files].forEach(f=>fileToDataURL(f,d=>{pushMedia(d);renderMedia();toast('📷 Uploaded to library')})); e.target.value=''; });
+function addMediaUrl(){ const u=document.getElementById('m_url').value.trim(); if(!u)return; pushMedia(u); document.getElementById('m_url').value=''; renderMedia(); }
+function delMedia(u){ setMedia(getMedia().filter(x=>x.url!==u)); renderMedia(); }
+
+/* ================= PROFILE ================= */
+function fillProfile(){
+  const g=id=>document.getElementById(id);
+  g('f_brand').value=C.brand; g('f_role').value=C.role; g('f_heroTitle').value=C.heroTitle; g('f_heroDesc').value=C.heroDesc; g('f_heroTrust').value=C.heroTrust||'';
+  g('f_aboutPhoto').value=C.aboutPhoto; g('f_aboutPrev').src=C.aboutPhoto; g('f_aboutRole').value=C.aboutRole;
+  if(!C.heroImg1 || C.heroImg1!==C.aboutPhoto){ C.heroImg1=C.aboutPhoto; }
+  g('f_heroImgs').innerHTML=['heroImg1','heroImg2','heroImg3'].map((k,i)=>`<div><span class="lbl">HERO IMAGE ${i+1}${i===0?' (🔵 auto-sync with About photo)':''}</span><div class="flex gap-2"><img src="${C[k]}" class="w-16 h-14 rounded-xl object-cover border border-emerald-200" id="hprev${i}" /><input id="f_${k}" class="inp" value="${C[k]}" ${i===0?'readonly':''} oninput="document.getElementById('hprev${i}').src=this.value" /></div></div>`).join('');
+  g('f_video').value=C.heroVideo||C.video||'';
+  g('f_walkthroughVideo').value=C.walkthroughVideo||'';
+  g('f_aboutVideo').value=C.aboutVideo||'';
+  g('f_stats').innerHTML=[1,2,3].map(i=>`<div class="card-green p-4"><div class="flex justify-between items-center"><b class="sec-t">Stat #${i}</b><span class="stat-pill">${C['stat'+i+'n']}+</span></div><span class="lbl mt-2">TITLE / LABEL</span><input id="f_stat${i}l" class="inp" value="${C['stat'+i+'l']}" /><span class="lbl mt-2">NUMBER</span><input id="f_stat${i}n" type="number" class="inp" value="${C['stat'+i+'n']}" /></div>`).join('');
+  g('f_aboutHeading').value=C.aboutHeading; g('f_aboutBio').value=C.aboutBio;
+  g('f_aw1t').value=C.award1t; g('f_aw1s').value=C.award1s; g('f_aw2t').value=C.award2t; g('f_aw2s').value=C.award2s;
+}
+document.getElementById('f_upload').addEventListener('change',e=>{ const f=e.target.files[0]; if(!f)return; fileToDataURL(f,d=>{ document.getElementById('f_aboutPhoto').value=d; document.getElementById('f_aboutPrev').src=d; pushMedia(d); toast('📷 Photo ready — press Save to go live'); }); e.target.value=''; });
+function saveProfile(){
+  const v=id=>document.getElementById(id).value.trim();
+  C.brand=v('f_brand')||C.brand; C.role=v('f_role')||C.role; C.heroTitle=v('f_heroTitle'); C.heroDesc=v('f_heroDesc'); C.heroTrust=v('f_heroTrust')||C.heroTrust;
+  C.aboutPhoto=v('f_aboutPhoto'); C.aboutRole=v('f_aboutRole');
+  C.heroImg1=C.aboutPhoto;
+  ['heroImg2','heroImg3'].forEach(k=>{ C[k]=v('f_'+k)||C[k]; });
+  try{ const h1=document.getElementById('f_heroImg1'); if(h1) h1.value=C.heroImg1; }catch(e){}
+  C.video=v('f_video');
+  C.heroVideo=C.video;
+  C.walkthroughVideo=v('f_walkthroughVideo');
+  C.aboutVideo=v('f_aboutVideo');
+  [1,2,3].forEach(i=>{ C['stat'+i+'l']=v('f_stat'+i+'l'); C['stat'+i+'n']=v('f_stat'+i+'n'); });
+  C.heroBadge=`${C.stat3n} — ${C.stat1n}+ happy clients`;
+  C.aboutHeading=v('f_aboutHeading'); C.aboutBio=v('f_aboutBio');
+  C.award1t=v('f_aw1t'); C.award1s=v('f_aw1s'); C.award2t=v('f_aw2t'); C.award2s=v('f_aw2s');
+  saveC(); toast('✅ Profile saved — homepage updated'); renderDash();
+}
+
+/* ================= SETTINGS ================= */
+function fillSettings(){ const g=id=>document.getElementById(id); g('st_topbar').value=C.topbar; g('st_phone').value=C.phone; g('st_wa').value=C.whatsapp; g('st_email').value=C.email; g('st_addr').value=C.addr; g('st_hours').value=C.hours; g('st_foot').value=C.foot; g('st_marquee').value=C.marquee; g('st_trustL').value=C.trustLabel; g('st_trust').value=C.trust; g('st_cT').value=C.contactTitle; g('st_cS').value=C.contactSub; g('st_baT').value=C.baTitle; g('st_baS').value=C.baSub; g('st_ba1b').value=C.ba1before; g('st_ba1a').value=C.ba1after; g('st_ba2b').value=C.ba2before; g('st_ba2a').value=C.ba2after; g('st_socFb').value=C.socFb; g('st_socIg').value=C.socIg; g('st_socBe').value=C.socBe; g('st_socLi').value=C.socLi; g('st_seoT').value=C.seoTitle; g('st_seoD').value=C.seoDesc; g('st_seoI').value=C.seoImg; }
+function saveSettings(){ const v=id=>document.getElementById(id).value.trim(); C.topbar=v('st_topbar'); C.phone=v('st_phone'); C.whatsapp=v('st_wa'); C.email=v('st_email'); C.addr=v('st_addr'); C.hours=v('st_hours'); C.foot=v('st_foot'); C.marquee=v('st_marquee'); C.trustLabel=v('st_trustL'); C.trust=v('st_trust'); C.contactTitle=v('st_cT'); C.contactSub=v('st_cS'); C.baTitle=v('st_baT'); C.baSub=v('st_baS'); C.ba1before=v('st_ba1b')||C.ba1before; C.ba1after=v('st_ba1a')||C.ba1after; C.ba2before=v('st_ba2b')||C.ba2before; C.ba2after=v('st_ba2a')||C.ba2after; C.socFb=v('st_socFb')||C.socFb; C.socIg=v('st_socIg')||C.socIg; C.socBe=v('st_socBe')||C.socBe; C.socLi=v('st_socLi')||C.socLi; C.seoTitle=v('st_seoT')||C.seoTitle; C.seoDesc=v('st_seoD')||C.seoDesc; C.seoImg=v('st_seoI')||C.seoImg; C.contactAddr=C.addr; C.contactPhone=C.phone; C.contactEmail=C.email; C.contactHours=C.hours; saveC(); toast('✅ Settings saved'); }
+function resetAll(){ if(!confirm('Reset all data to demo?'))return; localStorage.removeItem('sa_content_v1'); localStorage.removeItem('sa_projects_v2'); localStorage.removeItem('sa_leads_v1'); location.reload(); }
+function changePass(){ const c=(document.getElementById('np_cur').value||''), n=(document.getElementById('np_new').value||''); if(saHash(c)!==getAdminHash()) return toast('❌ Current password wrong'); if(n.length<8) return toast('Min 8 chars required'); setAdminHash(saHash(n)); document.getElementById('np_cur').value=''; document.getElementById('np_new').value=''; toast('✅ Password updated'); }
+function exportData(){ const data={content:C,projects,leads:getLeads(),media:getMedia()}; const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'})); const a=document.createElement('a'); a.href=url; a.download='anik-cms-backup.json'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),5000); }
+document.getElementById('importFile').addEventListener('change',e=>{ const f=e.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=ev=>{ try{ const d=JSON.parse(ev.target.result); if(!d||typeof d!=='object') throw 0; if(d.content&&typeof d.content==='object'){ C=Object.assign({},DEFAULT_CONTENT,d.content); saveC(); } if(Array.isArray(d.projects)){ projects=d.projects.map(normP); saveP(); } if(Array.isArray(d.leads)) setLeads(d.leads); if(Array.isArray(d.media)) setMedia(d.media); toast('✅ Backup restored'); go('dashboard'); }catch(err){toast('❌ Invalid backup file')} finally{ e.target.value=''; } }; r.readAsText(f); });
+
+function toast(msg){ const b=document.getElementById('toastBox'); const d=document.createElement('div'); d.className='toast bg-emerald-900 text-white text-sm font-medium px-5 py-3.5 rounded-2xl shadow-2xl text-center'; d.textContent=msg; b.appendChild(d); setTimeout(()=>{d.style.opacity='0';d.style.transition='.4s';setTimeout(()=>d.remove(),400)},3000); }
+
+/* init mobile menu + dashboard */
+function syncMobileMenu(){
+  const mm=document.getElementById('mMenu'); if(!mm) return;
+  mm.innerHTML='';
+  document.querySelectorAll('#sideMenu .side-link[data-p]').forEach(x=>{
+    const c=x.cloneNode(true); c.removeAttribute('id');
+    c.querySelectorAll('[id]').forEach(n=>n.removeAttribute('id'));
+    c.onclick=()=>go(x.dataset.p);
+    if(x.dataset.p===(document.querySelector('#sideMenu .side-link.active')||{}).dataset?.p) c.classList.add('active');
+    mm.appendChild(c);
+  });
+}
+syncMobileMenu();
+go('dashboard');
+</script>
+</body>
+</html>

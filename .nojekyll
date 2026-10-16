@@ -1,0 +1,3 @@
+# Prevent GitHub Pages from running Jekyll.
+# This file must exist (can stay empty) so admin.html,
+# files/folders starting with _ and normal static assets serve correctly.

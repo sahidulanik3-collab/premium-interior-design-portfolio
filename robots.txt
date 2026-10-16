@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# After your site is live, replace USERNAME and REPO-NAME below:
+# Sitemap: https://USERNAME.github.io/REPO-NAME/sitemap.xml
